@@ -1,15 +1,14 @@
-Deploy this folder with automatic GitHub + Vercel deployments. Do everything
-for me — no manual steps, no clicking in a browser. Assume I'm already logged
-into the `gh` and `vercel` CLIs.
+Push this folder to GitHub for me automatically — no manual steps.
 
-Run these end to end, using the folder's own name as the repo/project name:
+Use the folder I currently have open. Assume I'm logged into the `gh` CLI
+(if I'm not, run `gh auth login` and walk me through it once).
+
+Do this end to end:
 1. git init, add all files, and commit.
-2. gh repo create <folder-name> --public --source=. --remote=origin --push
-   (creates the GitHub repo and pushes in one step).
-3. vercel --yes (deploy to Vercel non-interactively).
-4. vercel git connect --yes (link the GitHub repo so every push auto-deploys).
+2. Create a GitHub repo named after this folder and push to it in one step:
+   gh repo create --public --source=. --remote=origin --push
+3. Print my new GitHub repo URL when done.
 
-Then confirm it worked by printing my live URL and my GitHub repo URL.
+From now on, when I say "push my changes", automatically run
+git add + commit + push so GitHub stays up to date. Don't make me do it manually.
 
-From now on, when I say "ship it", automatically run git add + commit + push so
-the live site updates itself. Don't ask me to do anything manually.
