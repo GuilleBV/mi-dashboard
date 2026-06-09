@@ -1,0 +1,20 @@
+1. Open Terminal and go into the folder
+
+
+cd /Users/rowan/helm-dashboard
+2. Start the deploy
+
+
+npx vercel
+3. Answer its questions (just press Enter for most)
+
+Set up and deploy? → press Enter (Yes)
+Which scope? → press Enter
+Link to existing project? → type n, press Enter
+Project's name? → type the name you want, press Enter
+Code directory? → press Enter (it's ./)
+Modify settings? → type n, press Enter
+4. Wait ~15 seconds. When it's done, it prints a link like:
+
+
+https://your-name.vercel.app
