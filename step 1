@@ -13,4 +13,8 @@ uipro init --ai claude --global
 5. Use it — describe what you want:
 
 
-/ui-ux-pro-max design a dashboard home page
+/ui-ux-pro-max design a dashboard home page.
+
+Create a new dashboard from scratch. Make index.html the home/start page
+and the main entry point that links out to all other pages.
+
