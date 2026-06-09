@@ -1,10 +1,16 @@
-/plugin marketplace add anthropics/claude-code
-```
-/plugin install ui-ux-pro-max
-```
+1. Open the terminal (in VS Code: Terminal → New Terminal).
+2. Install the CLI — type:
+
+npm install -g uipro-cli
+
+3. Install the skill globally — type:
+
+uipro init --ai claude --global
+4. Open Claude Code chat, type / and show it appears in the list:
+
 /ui-ux-pro-max
-```
-/ui-ux-pro-max show me dashboard styles and color palettes
-```
+
+5. Use it — describe what you want:
+
+
 /ui-ux-pro-max design a dashboard home page
-```
