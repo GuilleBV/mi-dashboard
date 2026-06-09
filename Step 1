@@ -1,0 +1,12 @@
+Step 1 — Add the marketplace (type in Claude Code chat):
+
+
+/plugin marketplace add anthropics/claude-code
+Step 2 — Install the skill:
+
+
+/plugin install ui-ux-pro-max
+Step 3 — Use it:
+
+
+/ui-ux-pro-max
