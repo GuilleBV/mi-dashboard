@@ -1,208 +1,4 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mountains + Particles Background</title>
-<style>
-/* ============================================================
- * Mountains + drifting particles background.
- *
- * Self-contained. Layer stack (back → front):
- *   .aurora     radial mint glow
- *   .mountains  two SVG silhouette ridges (far + near)
- *   .mist       soft horizontal band above the ridges
- *   .particles  drifting mint pinpoints (generated in JS)
- *
- * Drop the markup + CSS into any page. Pure CSS animation +
- * a tiny JS loop to spawn the particles. No dependencies.
- * ============================================================ */
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-.scene {
-  --bg: #04060a;
-  --mint: #6ee7b7;
-  --mint-soft: #a7f3d0;
-
-  position: relative;
-  height: 100vh;
-  min-height: 720px;
-  width: 100%;
-  overflow: hidden;
-  isolation: isolate;
-  background: var(--bg);
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}
-
-/* ----- Aurora: radial mint glow ----- */
-.aurora {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(60% 50% at 50% 48%,
-      rgba(110, 231, 183, 0.22) 0%,
-      rgba(110, 231, 183, 0.08) 30%,
-      rgba(110, 231, 183, 0) 65%),
-    radial-gradient(28% 22% at 50% 50%,
-      rgba(255, 226, 181, 0.10) 0%,
-      rgba(255, 226, 181, 0) 70%),
-    radial-gradient(120% 80% at 50% 100%,
-      rgba(14, 38, 30, 0.85) 0%,
-      rgba(4, 6, 10, 1) 70%);
-}
-
-/* ----- Mountains: two silhouette ridges ----- */
-.mountains {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  z-index: 1;
-  height: 38vh;
-  min-height: 220px;
-  pointer-events: none;
-}
-.mountains svg { width: 100%; height: 100%; display: block; }
-
-/* ----- Mist: soft band above the ridges ----- */
-.mist {
-  position: absolute;
-  left: 0; right: 0;
-  bottom: 28vh;
-  height: 22vh;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(to top,
-    rgba(4, 6, 10, 0) 0%,
-    rgba(110, 231, 183, 0.06) 40%,
-    rgba(4, 6, 10, 0) 100%);
-  filter: blur(8px);
-}
-
-/* ----- Particles: drifting mint pinpoints ----- */
-.particles { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
-.particles span {
-  position: absolute;
-  width: 1.5px; height: 1.5px;
-  background: rgba(233, 239, 233, 0.55);
-  border-radius: 50%;
-  box-shadow: 0 0 4px rgba(167, 243, 208, 0.35);
-  animation: drift linear infinite;
-}
-@keyframes drift {
-  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
-  8%   { opacity: 0.7; }
-  92%  { opacity: 0.5; }
-  100% { transform: translate3d(var(--dx, 12px), var(--dy, -100vh), 0); opacity: 0; }
-}
-
-/* Optional centered caption — delete if you only want the background. */
-.caption {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  pointer-events: none;
-}
-.caption h1 {
-  font-family: 'Times New Roman', Georgia, serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(34px, 6vw, 64px);
-  color: #e9efe9;
-  letter-spacing: -0.01em;
-}
-.caption h1 em { color: var(--mint); }
-.caption p {
-  margin-top: 14px;
-  font-size: 13px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(233, 239, 233, 0.5);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .particles span { animation: none; }
-}
-</style>
-</head>
-<body>
-
-  <div class="scene">
-    <!-- Aurora glow -->
-    <div class="aurora" aria-hidden="true"></div>
-
-    <!-- Mountains horizon -->
-    <div class="mountains" aria-hidden="true">
-      <svg viewBox="0 0 1600 420" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="mt-far" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="#0d1a17" stop-opacity="0" />
-            <stop offset="55%"  stop-color="#0d1a17" stop-opacity=".55" />
-            <stop offset="100%" stop-color="#0d1a17" stop-opacity=".95" />
-          </linearGradient>
-          <linearGradient id="mt-near" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="#050a09" stop-opacity=".4" />
-            <stop offset="60%"  stop-color="#050a09" stop-opacity=".95" />
-            <stop offset="100%" stop-color="#050a09" stop-opacity="1" />
-          </linearGradient>
-        </defs>
-        <!-- Far ridge -->
-        <path
-          d="M0,300 L120,230 L210,260 L320,180 L430,220 L560,150 L680,210 L820,170 L960,220 L1100,180 L1240,240 L1380,200 L1500,250 L1600,220 L1600,420 L0,420 Z"
-          fill="url(#mt-far)"
-        />
-        <!-- Near ridge -->
-        <path
-          d="M0,360 L100,320 L220,340 L340,290 L460,330 L590,300 L720,340 L860,310 L1000,350 L1140,310 L1280,355 L1420,320 L1540,360 L1600,340 L1600,420 L0,420 Z"
-          fill="url(#mt-near)"
-        />
-      </svg>
-    </div>
-
-    <!-- Mist band -->
-    <div class="mist" aria-hidden="true"></div>
-
-    <!-- Drifting particles (filled by JS) -->
-    <div class="particles" id="particles" aria-hidden="true"></div>
-
-    <!-- Optional caption — remove this block for a pure background -->
-    <div class="caption">
-      <h1>Your <em>peak</em> today</h1>
-      <p>mountains · mist · particles</p>
-    </div>
-  </div>
-
-<script>
-/* Spawn drifting pinpoints. Each gets a random position, speed, size and
-   a horizontal sway via the --dx / --dy custom props the @keyframes reads.
-   Negative delays mean the field looks "already running" on first paint. */
-(function () {
-  const root = document.getElementById('particles');
-  if (!root) return;
-  const N = window.innerWidth < 640 ? 10 : 18;
-  for (let i = 0; i < N; i++) {
-    const s = document.createElement('span');
-    const dur = 18 + Math.random() * 22;
-    s.style.left = (Math.random() * 100) + '%';
-    s.style.top = (60 + Math.random() * 40) + 'vh';
-    const size = 1 + Math.random() * 1.2;
-    s.style.width = s.style.height = size + 'px';
-    s.style.animationDuration = dur + 's';
-    s.style.animationDelay = (-Math.random() * dur) + 's';
-    s.style.setProperty('--dx', (Math.random() * 30 - 15) + 'px');
-    s.style.setProperty('--dy', (-(60 + Math.random() * 50)) + 'vh');
-    root.appendChild(s);
-  }
-})();
-</script>
-=======
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -255,7 +51,6 @@
       overflow-x: hidden;
     }
 
-    /* Glow ambiental de fondo */
     body::before {
       content: '';
       position: fixed;
@@ -306,7 +101,6 @@
       color: var(--fg);
     }
 
-    /* Widget reloj — esquina superior derecha */
     .clock-widget {
       display: flex;
       flex-direction: column;
@@ -351,11 +145,7 @@
     }
 
     /* ============================================================
-     * BENTO CARD — clase base compartida por TODAS las tarjetas.
-     *
-     * Fondo oscuro translucido + borde sutil + radio grande.
-     * La transicion de elevacion (requisito 5) se aplica aqui
-     * para que todas las tarjetas hereden el comportamiento hover.
+     * BENTO CARD — clase base compartida por TODAS las tarjetas
      * ============================================================ */
     .bento-card {
       background: var(--card);
@@ -376,17 +166,14 @@
       box-shadow: 0 8px 32px rgba(96, 165, 250, 0.07);
     }
 
-    /* Modificadores de tamano */
-    .bento-card--hero { grid-column: span 2; grid-row: span 2; }
-    .bento-card--wide { grid-column: span 2; }
-    .bento-card--tall { grid-row: span 2; }
-    .bento-card--full { grid-column: span 4; }
-
-    /* Superficie elevada */
+    .bento-card--hero     { grid-column: span 2; grid-row: span 2; }
+    .bento-card--wide     { grid-column: span 2; }
+    .bento-card--tall     { grid-row: span 2; }
+    .bento-card--full     { grid-column: span 4; }
     .bento-card--elevated { background: var(--card-elevated); }
 
     /* ============================================================
-     * ANATOMIA DE TARJETA — tipografia interna reutilizable
+     * ANATOMIA DE TARJETA
      * ============================================================ */
     .card-eyebrow {
       font-family: var(--font-mono);
@@ -413,7 +200,6 @@
       margin-top: 0.35rem;
     }
 
-    /* Linea de acento decorativa en el borde superior de la tarjeta */
     .card-accent-line {
       position: absolute;
       top: 0; left: 1.5rem; right: 1.5rem;
@@ -422,7 +208,6 @@
       opacity: 0.35;
     }
 
-    /* Badge inline */
     .card-badge {
       display: inline-flex;
       align-items: center;
@@ -445,7 +230,7 @@
     }
 
     /* ============================================================
-     * HERO CARD — arte de fondo generativo animado
+     * HERO CARD
      * ============================================================ */
     .hero-art {
       position: absolute;
@@ -493,7 +278,7 @@
     }
 
     /* ============================================================
-     * FILA DE STATS CON MINI-BARRAS
+     * STATS CON MINI-BARRAS
      * ============================================================ */
     .stat-row  { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
     .stat-item { display: flex; align-items: center; gap: 0.625rem; }
@@ -567,7 +352,7 @@
     }
 
     /* ============================================================
-     * RING SVG (renderizado por JS)
+     * RING SVG
      * ============================================================ */
     .ring-wrapper {
       display: flex;
@@ -585,7 +370,7 @@
     }
 
     /* ============================================================
-     * TICKER — barra de datos en scroll horizontal continuo
+     * TICKER
      * ============================================================ */
     .bento-card--ticker {
       padding: 0;
@@ -639,6 +424,186 @@
     }
 
     /* ============================================================
+     * DAILY FOCUS — tarjeta de to-do list
+     * ============================================================ */
+
+    /* Cabecera con titulo y streak en la misma fila */
+    .todo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.875rem;
+    }
+
+    /* Badge del streak counter */
+    .streak-badge {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--fg);
+      background: var(--card-elevated);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 10px;
+      transition:
+        transform     0.15s ease-in-out,
+        border-color  0.2s ease-in-out;
+      cursor: default;
+      user-select: none;
+    }
+
+    /* Animacion de "bump" al incrementar el streak */
+    .streak-badge--bump {
+      transform: scale(1.25);
+      border-color: rgba(96, 165, 250, 0.5);
+    }
+
+    /* Fila input + boton añadir */
+    .todo-input-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .todo-input {
+      flex: 1;
+      background: var(--card-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      padding: 0.5rem 0.75rem;
+      outline: none;
+      transition: border-color 0.3s ease-in-out;
+      min-width: 0;
+    }
+
+    .todo-input::placeholder { color: var(--muted); }
+    .todo-input:focus        { border-color: var(--accent); }
+
+    /* Boton circular "+" */
+    .todo-add-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      color: #000;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition:
+        background  0.3s ease-in-out,
+        transform   0.15s ease-in-out;
+    }
+
+    .todo-add-btn:hover  { background: var(--accent-hover); }
+    .todo-add-btn:active { transform: scale(0.92); }
+
+    /* Lista de tareas */
+    .todo-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 0.75rem;
+      max-height: 220px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    /* Cada item de tarea */
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.5rem 0.125rem;
+      border-bottom: 1px solid var(--border);
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    .todo-item:last-child { border-bottom: none; }
+
+    /* Checkbox circular */
+    .todo-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-strong);
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background     0.2s ease-in-out,
+        border-color   0.2s ease-in-out;
+    }
+
+    /* Ocultar checkmark por defecto; mostrarlo al marcar */
+    .todo-check svg        { display: none; }
+    .todo-check--done      { background: var(--accent); border-color: var(--accent); }
+    .todo-check--done svg  { display: block; }
+
+    /* Texto de la tarea */
+    .todo-text {
+      font-size: 0.84rem;
+      color: var(--fg);
+      flex: 1;
+      line-height: 1.45;
+      transition:
+        text-decoration  0.2s ease-in-out,
+        opacity          0.2s ease-in-out;
+    }
+
+    .todo-text--done {
+      text-decoration: line-through;
+      opacity: 0.45;
+    }
+
+    /* Mensaje de lista vacia */
+    .todo-empty {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 1.25rem 0;
+      font-family: var(--font-mono);
+      letter-spacing: 0.06em;
+    }
+
+    /* Boton Push remaining to tomorrow */
+    .todo-push-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.5rem 0.875rem;
+      cursor: pointer;
+      transition:
+        border-color  0.3s ease-in-out,
+        color         0.3s ease-in-out;
+    }
+
+    .todo-push-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ============================================================
      * RESPONSIVE
      * ============================================================ */
     @media (max-width: 980px) {
@@ -673,13 +638,13 @@
       .bento-card--full { grid-column: span 1; grid-row: span 1; }
     }
 
-    /* Respeta prefers-reduced-motion */
     @media (prefers-reduced-motion: reduce) {
       .bento-card               { transition: none; }
       .bento-card:hover         { transform: none; }
       .hero-art                 { animation: none; }
       .ticker-track             { animation: none; }
       .ticker-pip               { animation: none; }
+      .streak-badge--bump       { transform: none; }
     }
   </style>
 </head>
@@ -693,12 +658,10 @@
   <header class="dashboard-header">
 
     <div class="header-left">
-      <!-- Saludo dinamico — actualizado por JS segun la hora -->
       <p class="greeting" id="js-greeting">—</p>
       <h1>Dashboard de Guillermo</h1>
     </div>
 
-    <!-- Widget de reloj y fecha en tiempo real -->
     <div class="clock-widget" aria-live="polite" aria-label="Hora y fecha actual">
       <span class="clock-time" id="js-clock-time">--:--</span>
       <span class="clock-date" id="js-clock-date">---</span>
@@ -708,10 +671,15 @@
 
   <!-- ============================================================
        BENTO GRID
+       Layout escritorio (4 cols):
+         Row 1: [Hero 2×2] [Tareas] [Foco]
+         Row 2: [Hero 2×2] [Accesos] [—]
+         Row 3: [Daily Focus 2×1] [Actividad 2×1]
+         Row 4: [Ticker 4×1]
        ============================================================ -->
   <main class="bento-grid">
 
-    <!-- ── HERO (2 columnas x 2 filas): Metrica principal ── -->
+    <!-- ── HERO (2×2) ── -->
     <div class="bento-card bento-card--hero bento-card--elevated">
       <div class="hero-art" aria-hidden="true"></div>
       <div class="hero-content">
@@ -785,7 +753,51 @@
       </div>
     </div>
 
-    <!-- ── ACTIVIDAD SEMANAL (2 columnas) ── -->
+    <!-- ── DAILY FOCUS (2×1) — To-Do List ── -->
+    <div class="bento-card bento-card--wide" id="card-daily-focus">
+      <div class="card-accent-line"></div>
+
+      <!-- Cabecera: titulo + streak counter -->
+      <div class="todo-header">
+        <p class="card-eyebrow" style="margin-bottom: 0;">Daily Focus</p>
+        <span class="streak-badge" id="js-streak" title="Racha: dias con todas las tareas completadas">&#x1F525; 0</span>
+      </div>
+
+      <!-- Input + boton añadir -->
+      <div class="todo-input-row">
+        <input
+          type="text"
+          class="todo-input"
+          id="js-todo-input"
+          placeholder="Añadir nueva tarea..."
+          maxlength="120"
+          autocomplete="off"
+        />
+        <button class="todo-add-btn" id="js-todo-add" aria-label="Añadir tarea">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="7" y1="1" x2="7" y2="13"/>
+            <line x1="1" y1="7" x2="13" y2="7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Lista de tareas -->
+      <ul class="todo-list" id="js-todo-list" aria-label="Lista de tareas diarias">
+        <li class="todo-empty" id="js-todo-empty">Sin tareas &mdash; añade una arriba</li>
+      </ul>
+
+      <!-- Boton especial: mover pendientes a mañana -->
+      <button class="todo-push-btn" id="js-todo-push" aria-label="Mover tareas pendientes a mañana">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"
+             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+        Push remaining to tomorrow
+      </button>
+    </div>
+
+    <!-- ── ACTIVIDAD SEMANAL (2×1) ── -->
     <div class="bento-card bento-card--wide">
       <div class="card-accent-line"></div>
       <p class="card-eyebrow">Actividad — esta semana</p>
@@ -813,7 +825,7 @@
       </div>
     </div>
 
-    <!-- ── TICKER LIVE (ancho completo, 4 columnas) ── -->
+    <!-- ── TICKER LIVE (4×1) ── -->
     <div class="bento-card bento-card--full bento-card--ticker">
       <div class="ticker-track" id="js-ticker"></div>
     </div>
@@ -828,28 +840,21 @@
 
   /* ------------------------------------------------------------
    * 1. SALUDO DINAMICO
-   *    Muestra "Buenos dias / tardes / noches" segun la hora.
-   *    Se ejecuta una vez al cargar la pagina.
    * ---------------------------------------------------------- */
   (function initGreeting() {
     const el = document.getElementById('js-greeting');
     if (!el) return;
-
     const hour = new Date().getHours();
     let text;
-
     if      (hour >= 5  && hour < 12) text = 'Buenos dias';
     else if (hour >= 12 && hour < 20) text = 'Buenas tardes';
     else                               text = 'Buenas noches';
-
     el.textContent = text;
   })();
 
 
   /* ------------------------------------------------------------
    * 2. RELOJ EN TIEMPO REAL
-   *    Actualiza HH:MM y la fecha cada segundo.
-   *    Usa setInterval para evitar deriva acumulada.
    * ---------------------------------------------------------- */
   (function initClock() {
     const timeEl = document.getElementById('js-clock-time');
@@ -867,26 +872,23 @@
       const day   = DAYS[now.getDay()];
       const date  = now.getDate();
       const month = MONTHS[now.getMonth()];
-
       timeEl.textContent = `${hh}:${mm}`;
       dateEl.textContent = `${day} ${date} ${month}`;
     }
 
-    tick();                       // render inmediato sin esperar 1s
+    tick();
     setInterval(tick, 1000);
   })();
 
 
   /* ------------------------------------------------------------
-   * 3. RING SVG — anillo de progreso circular
-   *    Genera el SVG dinamicamente. Anima stroke-dashoffset
-   *    con dos rAF para que la transicion CSS se dispare.
+   * 3. RING SVG
    * ---------------------------------------------------------- */
   (function initRing() {
     const container = document.getElementById('js-ring');
     if (!container) return;
 
-    const VALUE  = 83;   // porcentaje a mostrar (0-100)
+    const VALUE  = 83;
     const SIZE   = 72;
     const STROKE = 6;
     const r      = (SIZE - STROKE) / 2;
@@ -901,8 +903,7 @@
           fill="none" stroke-width="${STROKE}" />
         <circle class="ring-fill" cx="${cx}" cy="${cx}" r="${r}"
           fill="none" stroke-width="${STROKE}" stroke-linecap="round"
-          stroke-dasharray="${circ}"
-          stroke-dashoffset="${circ}" />
+          stroke-dasharray="${circ}" stroke-dashoffset="${circ}" />
       </svg>`;
 
     requestAnimationFrame(() => {
@@ -916,9 +917,6 @@
 
   /* ------------------------------------------------------------
    * 4. TICKER DE DATOS
-   *    Genera los items de la barra de scroll y los duplica
-   *    para lograr un loop continuo sin salto visual.
-   *    Pausa al hacer hover (controlado por CSS).
    * ---------------------------------------------------------- */
   (function initTicker() {
     const track = document.getElementById('js-ticker');
@@ -944,12 +942,150 @@
         </span>`
       ).join('');
 
-    /* Duplicar contenido para el loop CSS sin interrupcion */
     track.innerHTML = buildRow() + buildRow();
+  })();
+
+
+  /* ------------------------------------------------------------
+   * 5. DAILY FOCUS — To-Do List con Streak Counter
+   *
+   *    Estado (en memoria, se resetea al recargar):
+   *      tasks[]  — array de objetos { id, text, done }
+   *      streak   — entero, incrementa al completar TODAS las tareas
+   *
+   *    Flujo principal:
+   *      addTask()        → crear tarea, actualizar DOM
+   *      toggleTask(id)   → marcar/desmarcar, comprobar si todas done
+   *      checkAllDone()   → si todas done y lista no vacía → streak++
+   *      pushToTomorrow() → eliminar tareas pendientes del DOM y estado
+   * ---------------------------------------------------------- */
+  (function initDailyFocus() {
+    const inputEl   = document.getElementById('js-todo-input');
+    const addBtn    = document.getElementById('js-todo-add');
+    const listEl    = document.getElementById('js-todo-list');
+    const pushBtn   = document.getElementById('js-todo-push');
+    const streakEl  = document.getElementById('js-streak');
+    const emptyEl   = document.getElementById('js-todo-empty');
+    if (!inputEl || !addBtn || !listEl || !pushBtn || !streakEl) return;
+
+    let tasks       = [];
+    let nextId      = 0;
+    let streak      = 0;
+    let streakGiven = false; // evita contar el mismo ciclo mas de una vez
+
+    /* ---- Escapa HTML para prevenir XSS ---- */
+    function esc(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /* ---- Muestra / oculta el estado vacio ---- */
+    function syncEmpty() {
+      if (emptyEl) emptyEl.style.display = tasks.length === 0 ? '' : 'none';
+    }
+
+    /* ---- Construye y añade un <li> al DOM ---- */
+    function renderItem(task) {
+      const li = document.createElement('li');
+      li.className   = 'todo-item';
+      li.dataset.id  = task.id;
+      li.innerHTML = `
+        <button class="todo-check${task.done ? ' todo-check--done' : ''}"
+                aria-label="${task.done ? 'Marcar como pendiente' : 'Marcar como completada'}">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+               stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <polyline points="1.5,5.5 4,8 8.5,2"/>
+          </svg>
+        </button>
+        <span class="todo-text${task.done ? ' todo-text--done' : ''}">${esc(task.text)}</span>`;
+
+      li.querySelector('.todo-check')
+        .addEventListener('click', () => toggleTask(task.id));
+
+      listEl.appendChild(li);
+    }
+
+    /* ---- Añadir nueva tarea ---- */
+    function addTask() {
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      const task = { id: nextId++, text, done: false };
+      tasks.push(task);
+      renderItem(task);
+      syncEmpty();
+
+      inputEl.value = '';
+      inputEl.focus();
+
+      /* Cada vez que se añade una tarea nueva se resetea el flag de streak,
+         para que completar este nuevo ciclo cuente como un nuevo logro. */
+      streakGiven = false;
+    }
+
+    /* ---- Marcar / desmarcar tarea ---- */
+    function toggleTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      task.done = !task.done;
+
+      const li  = listEl.querySelector(`[data-id="${id}"]`);
+      const btn = li.querySelector('.todo-check');
+      const txt = li.querySelector('.todo-text');
+
+      btn.classList.toggle('todo-check--done', task.done);
+      txt.classList.toggle('todo-text--done',  task.done);
+      btn.setAttribute('aria-label',
+        task.done ? 'Marcar como pendiente' : 'Marcar como completada');
+
+      checkAllDone();
+    }
+
+    /* ---- Comprueba si todas las tareas estan completadas ---- */
+    function checkAllDone() {
+      if (tasks.length === 0 || streakGiven) return;
+      if (tasks.every(t => t.done)) {
+        streak++;
+        streakGiven = true;
+        updateStreakBadge();
+      }
+    }
+
+    /* ---- Actualiza el badge de streak con animacion ---- */
+    function updateStreakBadge() {
+      streakEl.textContent = `🔥 ${streak}`;  // 🔥 + numero
+      streakEl.classList.add('streak-badge--bump');
+      setTimeout(() => streakEl.classList.remove('streak-badge--bump'), 250);
+    }
+
+    /* ---- Elimina las tareas NO completadas (push a manana) ---- */
+    function pushToTomorrow() {
+      const pending = tasks.filter(t => !t.done);
+      if (pending.length === 0) return;
+
+      pending.forEach(task => {
+        tasks = tasks.filter(t => t.id !== task.id);
+        listEl.querySelector(`[data-id="${task.id}"]`)?.remove();
+      });
+
+      syncEmpty();
+    }
+
+    /* ---- Event listeners ---- */
+    addBtn.addEventListener('click', addTask);
+    inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+    pushBtn.addEventListener('click', pushToTomorrow);
+
+    /* Estado inicial: ocultar empty si hay tareas (no hay al inicio) */
+    syncEmpty();
   })();
 
 </script>
 
->>>>>>> a256bac (Base y Perfil)
 </body>
 </html>
