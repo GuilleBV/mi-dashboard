@@ -1527,509 +1527,500 @@
      JAVASCRIPT — modular, comentado, al final del body
      ============================================================ -->
 <script>
+'use strict';
 
-  /* ------------------------------------------------------------
-   * 1. SALUDO DINAMICO
-   * ---------------------------------------------------------- */
-  (function initGreeting() {
-    const el = document.getElementById('js-greeting');
-    if (!el) return;
-    const hour = new Date().getHours();
-    let text;
-    if      (hour >= 5  && hour < 12) text = 'Buenos dias';
-    else if (hour >= 12 && hour < 20) text = 'Buenas tardes';
-    else                               text = 'Buenas noches';
-    el.textContent = text;
-  })();
-
-
-  /* ------------------------------------------------------------
-   * 2. RELOJ EN TIEMPO REAL
-   * ---------------------------------------------------------- */
-  (function initClock() {
-    const timeEl = document.getElementById('js-clock-time');
-    const dateEl = document.getElementById('js-clock-date');
-    if (!timeEl || !dateEl) return;
-
-    const DAYS   = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
-    const MONTHS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-                    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-
-    function tick() {
-      const now   = new Date();
-      const hh    = String(now.getHours()).padStart(2, '0');
-      const mm    = String(now.getMinutes()).padStart(2, '0');
-      const day   = DAYS[now.getDay()];
-      const date  = now.getDate();
-      const month = MONTHS[now.getMonth()];
-      timeEl.textContent = `${hh}:${mm}`;
-      dateEl.textContent = `${day} ${date} ${month}`;
-    }
-
-    tick();
-    setInterval(tick, 1000);
-  })();
+/* ============================================================
+ * DASHBOARD DE GUILLERMO — JavaScript principal
+ *
+ * Arquitectura: IIFEs independientes, sin estado global compartido.
+ *
+ * Módulos:
+ *   1. initClock()       — Reloj HH:MM + fecha, actualiza cada segundo
+ *   2. initGreeting()    — Saludo dinámico (Good Morning / Afternoon / Evening)
+ *   3. initRing()        — Anillo SVG de progreso animado
+ *   4. initTicker()      — Ticker de datos en movimiento continuo
+ *   5. initDailyFocus()  — To-Do List con Streak Counter
+ *   6. initVitals()      — Water Tracker + Energy Meter
+ *   7. initFinance()     — Net Worth editable por sección
+ *   8. initHealthStack() — Suplementos con alerta de dosis matutina
+ * ============================================================ */
 
 
-  /* ------------------------------------------------------------
-   * 3. RING SVG
-   * ---------------------------------------------------------- */
-  (function initRing() {
-    const container = document.getElementById('js-ring');
-    if (!container) return;
+/* ============================================================
+ * 1. RELOJ EN TIEMPO REAL
+ *    Actualiza la hora (HH:MM) cada segundo y la fecha (Lun 13 Jun).
+ * ============================================================ */
+(function initClock() {
+  const timeEl = document.getElementById('js-clock-time');
+  const dateEl = document.getElementById('js-clock-date');
+  if (!timeEl || !dateEl) return;
 
-    const VALUE  = 83;
-    const SIZE   = 72;
-    const STROKE = 6;
-    const r      = (SIZE - STROKE) / 2;
-    const cx     = SIZE / 2;
-    const circ   = 2 * Math.PI * r;
-    const target = circ * (1 - VALUE / 100);
+  const DAYS   = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+  const MONTHS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                  'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-    container.innerHTML = `
-      <svg width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}"
-           aria-label="Progreso de foco: ${VALUE}%" role="img">
-        <circle class="ring-track" cx="${cx}" cy="${cx}" r="${r}"
-          fill="none" stroke-width="${STROKE}" />
-        <circle class="ring-fill" cx="${cx}" cy="${cx}" r="${r}"
-          fill="none" stroke-width="${STROKE}" stroke-linecap="round"
-          stroke-dasharray="${circ}" stroke-dashoffset="${circ}" />
-      </svg>`;
+  function tick() {
+    const now = new Date();
+    const hh  = String(now.getHours()).padStart(2, '0');
+    const mm  = String(now.getMinutes()).padStart(2, '0');
+    timeEl.textContent = `${hh}:${mm}`;
+    dateEl.textContent = `${DAYS[now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]}`;
+  }
 
+  tick();
+  setInterval(tick, 1_000);
+})();
+
+
+/* ============================================================
+ * 2. SALUDO DINÁMICO
+ *    Lee la hora del sistema y escribe el saludo apropiado:
+ *      05:00 – 11:59  →  Good Morning
+ *      12:00 – 17:59  →  Good Afternoon
+ *      18:00+         →  Good Evening
+ * ============================================================ */
+(function initGreeting() {
+  const el = document.getElementById('js-greeting');
+  if (!el) return;
+
+  const hour = new Date().getHours();
+  let greeting;
+
+  if      (hour >= 5  && hour < 12) greeting = 'Good Morning';
+  else if (hour >= 12 && hour < 18) greeting = 'Good Afternoon';
+  else                               greeting = 'Good Evening';
+
+  el.textContent = greeting;
+})();
+
+
+/* ============================================================
+ * 3. ANILLO SVG DE FOCO
+ *    Genera el SVG programáticamente. Usa doble requestAnimationFrame
+ *    para que la transición CSS registre el estado inicial (offset=circ)
+ *    antes de animar al valor objetivo.
+ * ============================================================ */
+(function initRing() {
+  const container = document.getElementById('js-ring');
+  if (!container) return;
+
+  const VALUE  = 83;                        // porcentaje a mostrar
+  const SIZE   = 72;                        // dimensión del SVG en px
+  const STROKE = 6;                         // grosor del trazo
+  const r      = (SIZE - STROKE) / 2;
+  const circ   = 2 * Math.PI * r;
+  const target = circ * (1 - VALUE / 100); // dashoffset para VALUE %
+
+  container.innerHTML = `
+    <svg width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}"
+         aria-label="Progreso de foco: ${VALUE}%" role="img">
+      <circle class="ring-track" cx="${SIZE/2}" cy="${SIZE/2}" r="${r}"
+              fill="none" stroke-width="${STROKE}"/>
+      <circle class="ring-fill"  cx="${SIZE/2}" cy="${SIZE/2}" r="${r}"
+              fill="none" stroke-width="${STROKE}" stroke-linecap="round"
+              stroke-dasharray="${circ}" stroke-dashoffset="${circ}"/>
+    </svg>`;
+
+  requestAnimationFrame(() =>
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const fill = container.querySelector('.ring-fill');
-        if (fill) fill.style.strokeDashoffset = target;
-      });
-    });
-  })();
+      const fill = container.querySelector('.ring-fill');
+      if (fill) fill.style.strokeDashoffset = target;
+    })
+  );
+})();
 
 
-  /* ------------------------------------------------------------
-   * 4. TICKER DE DATOS
-   * ---------------------------------------------------------- */
-  (function initTicker() {
-    const track = document.getElementById('js-ticker');
-    if (!track) return;
+/* ============================================================
+ * 4. TICKER DE DATOS EN MOVIMIENTO
+ *    El contenido se duplica para crear un bucle seamless: cuando
+ *    el primer conjunto sale del viewport, el segundo ya ocupa su lugar.
+ * ============================================================ */
+(function initTicker() {
+  const track = document.getElementById('js-ticker');
+  if (!track) return;
 
-    const items = [
-      { label: 'Tareas pendientes', value: '7',        live: true  },
-      { label: 'Racha actual',      value: '14 dias'               },
-      { label: 'Proxima reunion',   value: '16:00',    live: true  },
-      { label: 'Uptime',            value: '99.9%'                 },
-      { label: 'Mensajes sin leer', value: '3'                     },
-      { label: 'Proyectos activos', value: '5'                     },
-      { label: 'Ultimo deploy',     value: 'Hace 2h'               },
-      { label: 'Bugs abiertos',     value: '2',        live: true  },
-    ];
+  const ITEMS = [
+    { label: 'Tareas pendientes', value: '7',        live: true  },
+    { label: 'Racha actual',      value: '14 días'               },
+    { label: 'Próxima reunión',   value: '16:00',    live: true  },
+    { label: 'Uptime',            value: '99.9%'                 },
+    { label: 'Mensajes sin leer', value: '3'                     },
+    { label: 'Proyectos activos', value: '5'                     },
+    { label: 'Último deploy',     value: 'Hace 2h'               },
+    { label: 'Bugs abiertos',     value: '2',        live: true  },
+  ];
 
-    const buildRow = () =>
-      items.map(it => `
-        <span class="ticker-item${it.live ? ' ticker-item--live' : ''}">
-          ${it.live ? '<span class="ticker-pip" aria-hidden="true"></span>' : ''}
-          ${it.label}&nbsp;<b>${it.value}</b>
-          <span class="ticker-sep" aria-hidden="true">/</span>
-        </span>`
-      ).join('');
+  const buildRow = () => ITEMS.map(it => `
+    <span class="ticker-item${it.live ? ' ticker-item--live' : ''}">
+      ${it.live ? '<span class="ticker-pip" aria-hidden="true"></span>' : ''}
+      ${it.label}&nbsp;<b>${it.value}</b>
+      <span class="ticker-sep" aria-hidden="true">/</span>
+    </span>`
+  ).join('');
 
-    track.innerHTML = buildRow() + buildRow();
-  })();
+  track.innerHTML = buildRow() + buildRow(); // duplicado para scroll infinito
+})();
 
 
-  /* ------------------------------------------------------------
-   * 5. DAILY FOCUS — To-Do List con Streak Counter
-   *
-   *    Estado (en memoria, se resetea al recargar):
-   *      tasks[]  — array de objetos { id, text, done }
-   *      streak   — entero, incrementa al completar TODAS las tareas
-   *
-   *    Flujo principal:
-   *      addTask()        → crear tarea, actualizar DOM
-   *      toggleTask(id)   → marcar/desmarcar, comprobar si todas done
-   *      checkAllDone()   → si todas done y lista no vacía → streak++
-   *      pushToTomorrow() → eliminar tareas pendientes del DOM y estado
-   * ---------------------------------------------------------- */
-  (function initDailyFocus() {
-    const inputEl   = document.getElementById('js-todo-input');
-    const addBtn    = document.getElementById('js-todo-add');
-    const listEl    = document.getElementById('js-todo-list');
-    const pushBtn   = document.getElementById('js-todo-push');
-    const streakEl  = document.getElementById('js-streak');
-    const emptyEl   = document.getElementById('js-todo-empty');
-    if (!inputEl || !addBtn || !listEl || !pushBtn || !streakEl) return;
+/* ============================================================
+ * 5. DAILY FOCUS — To-Do List con Streak Counter
+ *
+ *  Estado en memoria (se pierde al recargar):
+ *    tasks[]     → [{ id, text, done }]
+ *    streak      → entero, cuenta los ciclos completados
+ *    streakGiven → flag para no sumar más de una vez por ciclo
+ *
+ *  Flujo principal:
+ *    addTask()        — valida input, crea objeto, renderiza <li>
+ *    toggleTask(id)   — alterna done, actualiza clases, llama checkAllDone
+ *    checkAllDone()   — si TODAS done y lista no vacía → streak++
+ *    pushToTomorrow() — elimina los pendientes del DOM y del array
+ * ============================================================ */
+(function initDailyFocus() {
+  const inputEl  = document.getElementById('js-todo-input');
+  const addBtn   = document.getElementById('js-todo-add');
+  const listEl   = document.getElementById('js-todo-list');
+  const pushBtn  = document.getElementById('js-todo-push');
+  const streakEl = document.getElementById('js-streak');
+  const emptyEl  = document.getElementById('js-todo-empty');
+  if (!inputEl || !addBtn || !listEl || !pushBtn || !streakEl) return;
 
-    let tasks       = [];
-    let nextId      = 0;
-    let streak      = 0;
-    let streakGiven = false; // evita contar el mismo ciclo mas de una vez
+  let tasks       = [];
+  let nextId      = 0;
+  let streak      = 0;
+  let streakGiven = false;
 
-    /* ---- Escapa HTML para prevenir XSS ---- */
-    function esc(str) {
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
+  // Previene inyección XSS en textos introducidos por el usuario
+  function esc(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 
-    /* ---- Muestra / oculta el estado vacio ---- */
-    function syncEmpty() {
-      if (emptyEl) emptyEl.style.display = tasks.length === 0 ? '' : 'none';
-    }
+  // Muestra u oculta el placeholder "Sin tareas"
+  function syncEmpty() {
+    if (emptyEl) emptyEl.style.display = tasks.length ? 'none' : '';
+  }
 
-    /* ---- Construye y añade un <li> al DOM ---- */
-    function renderItem(task) {
-      const li = document.createElement('li');
-      li.className   = 'todo-item';
-      li.dataset.id  = task.id;
-      li.innerHTML = `
-        <button class="todo-check${task.done ? ' todo-check--done' : ''}"
-                aria-label="${task.done ? 'Marcar como pendiente' : 'Marcar como completada'}">
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
-               stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-               aria-hidden="true">
-            <polyline points="1.5,5.5 4,8 8.5,2"/>
-          </svg>
-        </button>
-        <span class="todo-text${task.done ? ' todo-text--done' : ''}">${esc(task.text)}</span>`;
+  // Construye y añade un <li> al final de la lista
+  function renderItem(task) {
+    const li      = document.createElement('li');
+    li.className  = 'todo-item';
+    li.dataset.id = task.id;
+    li.innerHTML  = `
+      <button class="todo-check${task.done ? ' todo-check--done' : ''}"
+              aria-label="${task.done ? 'Marcar como pendiente' : 'Marcar como completada'}">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+             stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+          <polyline points="1.5,5.5 4,8 8.5,2"/>
+        </svg>
+      </button>
+      <span class="todo-text${task.done ? ' todo-text--done' : ''}">${esc(task.text)}</span>`;
 
-      li.querySelector('.todo-check')
-        .addEventListener('click', () => toggleTask(task.id));
+    li.querySelector('.todo-check').addEventListener('click', () => toggleTask(task.id));
+    listEl.appendChild(li);
+  }
 
-      listEl.appendChild(li);
-    }
+  // Valida el input y añade una nueva tarea a la lista
+  function addTask() {
+    const text = inputEl.value.trim();
+    if (!text) return;
 
-    /* ---- Añadir nueva tarea ---- */
-    function addTask() {
-      const text = inputEl.value.trim();
-      if (!text) return;
+    const task = { id: nextId++, text, done: false };
+    tasks.push(task);
+    renderItem(task);
+    syncEmpty();
 
-      const task = { id: nextId++, text, done: false };
-      tasks.push(task);
-      renderItem(task);
-      syncEmpty();
+    inputEl.value = '';
+    inputEl.focus();
 
-      inputEl.value = '';
-      inputEl.focus();
+    // Nuevo ítem en lista → el ciclo aún no se ha ganado
+    streakGiven = false;
+  }
 
-      /* Cada vez que se añade una tarea nueva se resetea el flag de streak,
-         para que completar este nuevo ciclo cuente como un nuevo logro. */
-      streakGiven = false;
-    }
+  // Alterna el estado completado de una tarea y actualiza el DOM
+  function toggleTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    task.done = !task.done;
 
-    /* ---- Marcar / desmarcar tarea ---- */
-    function toggleTask(id) {
-      const task = tasks.find(t => t.id === id);
-      if (!task) return;
+    const li  = listEl.querySelector(`[data-id="${id}"]`);
+    const btn = li.querySelector('.todo-check');
+    const txt = li.querySelector('.todo-text');
 
-      task.done = !task.done;
+    btn.classList.toggle('todo-check--done', task.done);
+    txt.classList.toggle('todo-text--done',  task.done);
+    btn.setAttribute('aria-label',
+      task.done ? 'Marcar como pendiente' : 'Marcar como completada');
 
-      const li  = listEl.querySelector(`[data-id="${id}"]`);
-      const btn = li.querySelector('.todo-check');
-      const txt = li.querySelector('.todo-text');
+    checkAllDone();
+  }
 
-      btn.classList.toggle('todo-check--done', task.done);
-      txt.classList.toggle('todo-text--done',  task.done);
-      btn.setAttribute('aria-label',
-        task.done ? 'Marcar como pendiente' : 'Marcar como completada');
-
-      checkAllDone();
-    }
-
-    /* ---- Comprueba si todas las tareas estan completadas ---- */
-    function checkAllDone() {
-      if (tasks.length === 0 || streakGiven) return;
-      if (tasks.every(t => t.done)) {
-        streak++;
-        streakGiven = true;
-        updateStreakBadge();
-      }
-    }
-
-    /* ---- Actualiza el badge de streak con animacion ---- */
-    function updateStreakBadge() {
-      streakEl.textContent = `🔥 ${streak}`;  // 🔥 + numero
+  // Si todas las tareas están completadas, incrementa la racha
+  function checkAllDone() {
+    if (!tasks.length || streakGiven) return;
+    if (tasks.every(t => t.done)) {
+      streak++;
+      streakGiven = true;
+      streakEl.textContent = `🔥 ${streak}`;
       streakEl.classList.add('streak-badge--bump');
       setTimeout(() => streakEl.classList.remove('streak-badge--bump'), 250);
     }
+  }
 
-    /* ---- Elimina las tareas NO completadas (push a manana) ---- */
-    function pushToTomorrow() {
-      const pending = tasks.filter(t => !t.done);
-      if (pending.length === 0) return;
-
-      pending.forEach(task => {
-        tasks = tasks.filter(t => t.id !== task.id);
-        listEl.querySelector(`[data-id="${task.id}"]`)?.remove();
-      });
-
-      syncEmpty();
-    }
-
-    /* ---- Event listeners ---- */
-    addBtn.addEventListener('click', addTask);
-    inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
-    pushBtn.addEventListener('click', pushToTomorrow);
-
-    /* Estado inicial: ocultar empty si hay tareas (no hay al inicio) */
+  // Elimina las tareas pendientes del DOM y del array de estado
+  function pushToTomorrow() {
+    const pending = tasks.filter(t => !t.done);
+    if (!pending.length) return;
+    pending.forEach(task => {
+      tasks = tasks.filter(t => t.id !== task.id);
+      listEl.querySelector(`[data-id="${task.id}"]`)?.remove();
+    });
     syncEmpty();
-  })();
+  }
+
+  addBtn.addEventListener('click', addTask);
+  inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+  pushBtn.addEventListener('click', pushToTomorrow);
+
+  syncEmpty(); // muestra el placeholder en el estado inicial vacío
+})();
 
 
-  /* ------------------------------------------------------------
-   * 6. DAILY PEAK & VITALS — Water Tracker + Energy Meter
-   *
-   *    Water Intake:
-   *    - Contador 0–8 con botones circulares − y +.
-   *    - 8 puntos que se van rellenando (azul) hasta completar.
-   *    - Al llegar a 8: count y label en verde, check visible.
-   *
-   *    Energy Level:
-   *    - Inicia en 80%. setInterval descuenta 1 % cada minuto.
-   *    - Boton "+Stimulant" suma 15 % (tope 100 %).
-   *    - La barra cambia de color segun el nivel:
-   *        >= 70 % verde · 40-69 % azul · 20-39 % ambar · <20 % rojo
-   * ---------------------------------------------------------- */
-  (function initVitals() {
+/* ============================================================
+ * 6. DAILY PEAK & VITALS — Water Tracker + Energy Meter
+ *
+ *  Water Intake:
+ *    Botones − y + modifican waterVal (0–8). Cada cambio repinta
+ *    los 8 puntos indicadores y el contador. A los 8 vasos, todo
+ *    se pone verde y aparece el icono de check.
+ *
+ *  Energy Level:
+ *    Parte en 80 %. Un setInterval resta 1 % cada minuto para
+ *    simular cansancio natural. El botón Stimulant suma 15 %
+ *    instantáneamente (tope: 100 %). La clase del relleno de la
+ *    barra cambia según el nivel: verde · azul · ámbar · rojo.
+ * ============================================================ */
+(function initVitals() {
 
-    /* ── WATER INTAKE ─────────────────────────────────────── */
-    const waterCountEl = document.getElementById('js-water-count');
-    const waterLabelEl = document.getElementById('js-water-label');
-    const waterCheckEl = document.getElementById('js-water-check');
-    const waterDotsEl  = document.getElementById('js-water-dots');
-    const waterDecBtn  = document.getElementById('js-water-dec');
-    const waterIncBtn  = document.getElementById('js-water-inc');
+  /* ── Water Intake ────────────────────────────────────────── */
+  const waterCountEl = document.getElementById('js-water-count');
+  const waterLabelEl = document.getElementById('js-water-label');
+  const waterCheckEl = document.getElementById('js-water-check');
+  const waterDotsEl  = document.getElementById('js-water-dots');
+  const waterDecBtn  = document.getElementById('js-water-dec');
+  const waterIncBtn  = document.getElementById('js-water-inc');
 
-    const WATER_MAX = 8;
-    let waterVal    = 0;
+  const WATER_MAX = 8;
+  let   waterVal  = 0;
 
-    /* Genera los 8 puntos indicadores una sola vez en el DOM */
-    const dots = [];
-    if (waterDotsEl) {
-      for (let i = 0; i < WATER_MAX; i++) {
-        const d = document.createElement('span');
-        d.className = 'water-dot';
-        waterDotsEl.appendChild(d);
-        dots.push(d);
-      }
+  // Crea los 8 puntos indicadores una sola vez y los guarda en memoria
+  const dots = [];
+  if (waterDotsEl) {
+    for (let i = 0; i < WATER_MAX; i++) {
+      const dot = document.createElement('span');
+      dot.className = 'water-dot';
+      waterDotsEl.appendChild(dot);
+      dots.push(dot);
     }
+  }
 
-    function renderWater() {
-      if (!waterCountEl) return;
-      const done = waterVal >= WATER_MAX;
+  function renderWater() {
+    if (!waterCountEl) return;
+    const done = waterVal >= WATER_MAX;
 
-      waterCountEl.textContent = waterVal;
-      waterCountEl.classList.toggle('water-count--done', done);
-      if (waterLabelEl) waterLabelEl.classList.toggle('water-label--done', done);
-      if (waterCheckEl) waterCheckEl.classList.toggle('water-check--visible', done);
+    waterCountEl.textContent = waterVal;
+    waterCountEl.classList.toggle('water-count--done', done);
+    waterLabelEl?.classList.toggle('water-label--done', done);
+    waterCheckEl?.classList.toggle('water-check--visible', done);
 
-      /* Actualiza los 8 puntos */
-      dots.forEach((dot, i) => {
-        const filled = i < waterVal;
-        dot.classList.toggle('water-dot--filled', filled && !done);
-        dot.classList.toggle('water-dot--done',   filled &&  done);
-        if (!filled) dot.className = 'water-dot'; /* reset a vacio */
-      });
-
-      if (waterDecBtn) waterDecBtn.disabled = waterVal <= 0;
-      if (waterIncBtn) waterIncBtn.disabled = waterVal >= WATER_MAX;
-    }
-
-    waterDecBtn?.addEventListener('click', () => { if (waterVal > 0)        { waterVal--; renderWater(); } });
-    waterIncBtn?.addEventListener('click', () => { if (waterVal < WATER_MAX) { waterVal++; renderWater(); } });
-
-    renderWater(); /* estado inicial */
-
-
-    /* ── ENERGY LEVEL ─────────────────────────────────────── */
-    const energyValEl  = document.getElementById('js-energy-val');
-    const energyBarEl  = document.getElementById('js-energy-bar');
-    const energyStatEl = document.getElementById('js-energy-status');
-    const stimBtn      = document.getElementById('js-stimulant-btn');
-    if (!energyValEl || !energyBarEl || !energyStatEl || !stimBtn) return;
-
-    let energy = 80; /* porcentaje inicial */
-
-    /* Devuelve clase CSS + texto de estado segun el nivel */
-    function getLevel(pct) {
-      if (pct >= 70) return { cls: 'energy-bar-fill--high',     label: 'Optimal performance'           };
-      if (pct >= 40) return { cls: 'energy-bar-fill--medium',   label: 'Steady — on track'             };
-      if (pct >= 20) return { cls: 'energy-bar-fill--low',      label: 'Fading — consider a break'     };
-      return             { cls: 'energy-bar-fill--critical', label: 'Low energy — rest recommended' };
-    }
-
-    function renderEnergy() {
-      const pct = Math.round(Math.max(0, Math.min(100, energy)));
-      const lvl = getLevel(pct);
-
-      energyValEl.textContent  = `${pct}%`;
-      energyBarEl.style.width  = `${pct}%`;
-      energyBarEl.setAttribute('aria-valuenow', pct);
-      energyBarEl.className    = `energy-bar-fill ${lvl.cls}`;
-      energyStatEl.textContent = lvl.label;
-
-      stimBtn.disabled = pct >= 100; /* deshabilita cuando ya esta al maximo */
-    }
-
-    /* Suma 15 % al pulsar el estimulante */
-    stimBtn.addEventListener('click', () => {
-      energy = Math.min(100, energy + 15);
-      renderEnergy();
+    // Cada punto es: vacío → azul (filled) → verde (done)
+    dots.forEach((dot, i) => {
+      const filled = i < waterVal;
+      dot.classList.toggle('water-dot--filled', filled && !done);
+      dot.classList.toggle('water-dot--done',   filled &&  done);
+      if (!filled) dot.className = 'water-dot'; // reset clases de relleno
     });
 
-    /* Resta 1 % por minuto para simular cansancio */
-    setInterval(() => {
-      if (energy > 0) {
-        energy = Math.max(0, energy - 1);
-        renderEnergy();
-      }
-    }, 60_000);
+    if (waterDecBtn) waterDecBtn.disabled = waterVal <= 0;
+    if (waterIncBtn) waterIncBtn.disabled = waterVal >= WATER_MAX;
+  }
 
-    renderEnergy(); /* estado inicial */
-  })();
+  waterDecBtn?.addEventListener('click', () => { if (waterVal > 0)         { waterVal--; renderWater(); } });
+  waterIncBtn?.addEventListener('click', () => { if (waterVal < WATER_MAX) { waterVal++; renderWater(); } });
+
+  renderWater(); // estado inicial: 0 vasos
+
+  /* ── Energy Level ────────────────────────────────────────── */
+  const energyValEl  = document.getElementById('js-energy-val');
+  const energyBarEl  = document.getElementById('js-energy-bar');
+  const energyStatEl = document.getElementById('js-energy-status');
+  const stimBtn      = document.getElementById('js-stimulant-btn');
+  if (!energyValEl || !energyBarEl || !energyStatEl || !stimBtn) return;
+
+  let energy = 80; // porcentaje inicial
+
+  // Mapea nivel numérico a clase CSS + texto descriptivo
+  function getEnergyLevel(pct) {
+    if (pct >= 70) return { cls: 'energy-bar-fill--high',     label: 'Optimal performance'           };
+    if (pct >= 40) return { cls: 'energy-bar-fill--medium',   label: 'Steady — on track'             };
+    if (pct >= 20) return { cls: 'energy-bar-fill--low',      label: 'Fading — consider a break'     };
+    return             { cls: 'energy-bar-fill--critical', label: 'Low energy — rest recommended' };
+  }
+
+  function renderEnergy() {
+    const pct = Math.round(Math.max(0, Math.min(100, energy)));
+    const lvl = getEnergyLevel(pct);
+
+    energyValEl.textContent  = `${pct}%`;
+    energyBarEl.style.width  = `${pct}%`;
+    energyBarEl.setAttribute('aria-valuenow', pct);
+    energyBarEl.className    = `energy-bar-fill ${lvl.cls}`;
+    energyStatEl.textContent = lvl.label;
+    stimBtn.disabled         = pct >= 100; // no se puede superar el máximo
+  }
+
+  // +15 % instantáneo al consumir un estimulante
+  stimBtn.addEventListener('click', () => {
+    energy = Math.min(100, energy + 15);
+    renderEnergy();
+  });
+
+  // Cansancio natural: -1 % cada 60 segundos
+  setInterval(() => {
+    if (energy > 0) { energy = Math.max(0, energy - 1); renderEnergy(); }
+  }, 60_000);
+
+  renderEnergy(); // estado inicial: 80 %
+})();
 
 
-  /* ------------------------------------------------------------
-   * 7. FINANCIAL OVERVIEW — resumen financiero editable
-   *
-   *    Cada sub-seccion (bank, investments, crypto) tiene un
-   *    boton de lapiz que abre un input inline. Al confirmar
-   *    (Enter o blur), actualiza el valor y recalcula el total.
-   *
-   *    Formato: $1,234,567.89  (toLocaleString 'en-US')
-   *    Negativo: prefijo '-$' y color rojo en el total.
-   *
-   *    Escape cancela la edicion sin guardar cambios.
-   * ---------------------------------------------------------- */
-  (function initFinance() {
-    const totalEl = document.getElementById('js-fin-total');
-    if (!totalEl) return;
+/* ============================================================
+ * 7. FINANCIAL OVERVIEW — Net Worth editable por categoría
+ *
+ *  El botón de lápiz de cada columna abre un prompt() nativo
+ *  con el balance actual precargado. Si el usuario confirma un
+ *  número válido, se actualiza el valor de esa categoría y se
+ *  recalcula el Total Net Worth al instante.
+ *
+ *  Formato: $1,234,567.89   |   negativo: -$1,234.56 (rojo)
+ *  Cancelar el prompt o introducir texto no numérico → sin cambios.
+ * ============================================================ */
+(function initFinance() {
+  const totalEl = document.getElementById('js-fin-total');
+  if (!totalEl) return;
 
-    /* Estado de cada categoria (en memoria) */
-    const values = { bank: 0, investments: 0, crypto: 0 };
+  // Mapa clave → etiqueta legible para el mensaje del prompt
+  const CATEGORIES = {
+    bank:        'Bank Accounts',
+    investments: 'Investments',
+    crypto:      'Crypto & Assets',
+  };
 
-    /* Configuracion de las 3 sub-secciones */
-    const COLS = [
-      { key: 'bank'        },
-      { key: 'investments' },
-      { key: 'crypto'      },
-    ];
+  // Estado financiero en memoria
+  const values = { bank: 0, investments: 0, crypto: 0 };
 
-    /* ---- Formatea un numero como moneda con signo ---- */
-    function fmt(n) {
-      const abs = Math.abs(n).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-      return (n < 0 ? '-$' : '$') + abs;
-    }
-
-    /* ---- Recalcula y pinta el Total Net Worth ---- */
-    function updateTotal() {
-      const sum = Object.values(values).reduce((a, b) => a + b, 0);
-      totalEl.textContent = fmt(sum);
-      totalEl.classList.toggle('finance-total--negative', sum < 0);
-    }
-
-    /* ---- Configura cada columna de forma independiente ---- */
-    COLS.forEach(({ key }) => {
-      const colEl   = document.getElementById(`fin-col-${key}`);
-      const valEl   = document.getElementById(`fin-val-${key}`);
-      const inputEl = document.getElementById(`fin-input-${key}`);
-      const editBtn = colEl?.querySelector('.finance-edit-btn');
-      if (!colEl || !valEl || !inputEl || !editBtn) return;
-
-      let escaping = false; /* flag para ignorar blur tras Escape */
-
-      /* Abre el modo edicion */
-      function openEdit() {
-        colEl.classList.add('finance-col--editing');
-        inputEl.value = values[key] !== 0 ? values[key] : '';
-        inputEl.focus();
-        inputEl.select();
-      }
-
-      /* Guarda el valor y cierra el modo edicion */
-      function commitEdit() {
-        if (escaping) { escaping = false; return; }
-        const raw = parseFloat(inputEl.value) || 0;
-        values[key]       = raw;
-        valEl.textContent = fmt(raw);
-        valEl.style.color = raw < 0 ? '#EF4444' : '';
-        colEl.classList.remove('finance-col--editing');
-        updateTotal();
-      }
-
-      /* Cancela sin guardar */
-      function cancelEdit() {
-        escaping = true;
-        colEl.classList.remove('finance-col--editing');
-      }
-
-      editBtn.addEventListener('click', openEdit);
-
-      inputEl.addEventListener('keydown', e => {
-        if (e.key === 'Enter')  { e.preventDefault(); commitEdit(); }
-        if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
-      });
-
-      /* blur guarda salvo que el usuario haya pulsado Escape */
-      inputEl.addEventListener('blur', commitEdit);
+  // Formatea un número como moneda USD: $1,234.56 o -$1,234.56
+  function fmt(n) {
+    const abs = Math.abs(n).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
+    return (n < 0 ? '-$' : '$') + abs;
+  }
 
-    updateTotal();
-  })();
+  // Suma las 3 categorías y pinta el total (rojo si negativo)
+  function updateTotal() {
+    const sum = Object.values(values).reduce((a, b) => a + b, 0);
+    totalEl.textContent = fmt(sum);
+    totalEl.classList.toggle('finance-total--negative', sum < 0);
+  }
 
+  // Configura el botón de lápiz de cada columna
+  Object.keys(CATEGORIES).forEach(key => {
+    const valEl   = document.getElementById(`fin-val-${key}`);
+    const editBtn = document.querySelector(`#fin-col-${key} .finance-edit-btn`);
+    if (!valEl || !editBtn) return;
 
-  /* ------------------------------------------------------------
-   * 8. HEALTH & STACK — suplementos con alerta de dosis olvidada
-   *
-   *    Logica de estado:
-   *    - Cada .health-check togglea su estado visual al hacer clic.
-   *    - evaluate() se ejecuta al marcar/desmarcar y cada 60 s.
-   *    - Condicion de alerta: hora >= 11 Y algun Morning sin marcar.
-   *      → Clase .bento-card--alert en la tarjeta (pulso rojo CSS).
-   *      → Status badge cambia a "Missed Morning Dose" en rojo.
-   *    - Si todas las Morning estan marcadas (a cualquier hora):
-   *      → Sin alerta. Status "On Track" en verde.
-   * ---------------------------------------------------------- */
-  (function initHealthStack() {
-    const card      = document.getElementById('card-health');
-    const statusEl  = document.getElementById('js-health-status');
-    if (!card || !statusEl) return;
+    editBtn.addEventListener('click', () => {
+      // Abre el diálogo nativo con el valor actual como sugerencia
+      const current  = values[key] !== 0 ? values[key] : '';
+      const response = prompt(`Enter new balance for ${CATEGORIES[key]}:`, current);
 
-    const allChecks     = card.querySelectorAll('.health-check');
-    const morningChecks = card.querySelectorAll('.health-check--morning');
+      // null → el usuario canceló; cadena vacía → limpiar a cero
+      if (response === null) return;
 
-    /* ---- Toggle visual del checkbox ---- */
-    allChecks.forEach(btn => {
-      btn.addEventListener('click', function () {
-        this.classList.toggle('health-check--done');
-        const txt = this.nextElementSibling;
-        if (txt) txt.classList.toggle('health-text--done',
-          this.classList.contains('health-check--done'));
-        evaluate();
-      });
+      const raw = parseFloat(response);
+      if (isNaN(raw)) {
+        alert('Please enter a valid number (e.g. 12500.00).');
+        return;
+      }
+
+      values[key]       = raw;
+      valEl.textContent = fmt(raw);
+      valEl.style.color = raw < 0 ? '#EF4444' : ''; // rojo si negativo
+      updateTotal();
     });
+  });
 
-    /* ---- Evalua si debe activarse la alerta ---- */
-    function evaluate() {
-      const hour          = new Date().getHours();
-      const allMorningOk  = Array.from(morningChecks)
-                              .every(b => b.classList.contains('health-check--done'));
-      const missed        = hour >= 11 && !allMorningOk;
+  updateTotal(); // inicializa el total en $0.00
+})();
 
-      card.classList.toggle('bento-card--alert', missed);
 
-      statusEl.className = `health-status ${missed ? 'health-status--err' : 'health-status--ok'}`;
-      statusEl.innerHTML = `<span class="health-status__dot"></span> ${
-        missed ? 'Status: Missed Morning Dose' : 'Status: On Track'
-      }`;
-    }
+/* ============================================================
+ * 8. HEALTH & STACK — suplementos con alerta de dosis matutina
+ *
+ *  Cada .health-check alterna .health-check--done al hacer clic
+ *  y propaga el estado tachado al texto adyacente (.health-text--done).
+ *
+ *  evaluate() determina si la alerta debe activarse:
+ *    Condición: hora del sistema ≥ 11:00 Y algún Morning desmarcado.
+ *    → Añade .bento-card--alert a la tarjeta (pulso rojo por CSS).
+ *    → Badge de estado cambia a "Missed Morning Dose" en rojo.
+ *    Si todos los Morning están marcados → sin alerta, "On Track" verde.
+ *
+ *  Se re-evalúa al marcar/desmarcar y también cada 60 s automáticamente
+ *  para detectar el paso de las 11 AM sin interacción del usuario.
+ * ============================================================ */
+(function initHealthStack() {
+  const card     = document.getElementById('card-health');
+  const statusEl = document.getElementById('js-health-status');
+  if (!card || !statusEl) return;
 
-    evaluate();
-    setInterval(evaluate, 60_000); /* re-evalua cada minuto */
-  })();
+  const allChecks     = card.querySelectorAll('.health-check');
+  const morningChecks = card.querySelectorAll('.health-check--morning');
+
+  // Toggle visual del checkbox + texto tachado + re-evaluación inmediata
+  allChecks.forEach(btn => {
+    btn.addEventListener('click', function () {
+      this.classList.toggle('health-check--done');
+      const txt = this.nextElementSibling; // span.health-text adyacente
+      if (txt) txt.classList.toggle('health-text--done',
+        this.classList.contains('health-check--done'));
+      evaluate();
+    });
+  });
+
+  // Evalúa el estado de alerta y actualiza badge y clase de la tarjeta
+  function evaluate() {
+    const hour         = new Date().getHours();
+    const allMorningOk = Array.from(morningChecks)
+                           .every(btn => btn.classList.contains('health-check--done'));
+    const missed       = hour >= 11 && !allMorningOk;
+
+    card.classList.toggle('bento-card--alert', missed);
+    statusEl.className = `health-status ${missed ? 'health-status--err' : 'health-status--ok'}`;
+    statusEl.innerHTML = `<span class="health-status__dot"></span> ${
+      missed ? 'Status: Missed Morning Dose' : 'Status: On Track'
+    }`;
+  }
+
+  evaluate();                        // evaluación inicial al cargar
+  setInterval(evaluate, 60_000);     // re-evalúa cada minuto
+})();
 
 </script>
 
