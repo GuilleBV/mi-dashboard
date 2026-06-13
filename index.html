@@ -604,6 +604,149 @@
     }
 
     /* ============================================================
+     * FINANCIAL OVERVIEW — resumen financiero
+     * ============================================================ */
+
+    /* Numero total grande en el centro */
+    .finance-center {
+      padding: 1.25rem 0 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .finance-total {
+      font-size: clamp(2.25rem, 5vw, 3.75rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--fg);
+      transition: color 0.3s ease-in-out;
+    }
+
+    .finance-total--negative { color: #EF4444; }
+
+    .finance-total-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Linea divisora */
+    .finance-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 1.125rem;
+    }
+
+    /* 3 sub-columnas */
+    .finance-row {
+      display: flex;
+      gap: 0;
+    }
+
+    .finance-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding: 0 1.5rem;
+    }
+
+    .finance-col:first-child { padding-left: 0; }
+    .finance-col:last-child  { padding-right: 0; }
+
+    .finance-col + .finance-col { border-left: 1px solid var(--border); }
+
+    .finance-col__label {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .finance-col__value-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .finance-col__value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      color: var(--fg);
+      line-height: 1;
+      transition: color 0.25s ease-in-out;
+    }
+
+    /* Boton lapiz circular */
+    .finance-edit-btn {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition:
+        border-color  0.25s ease-in-out,
+        color         0.25s ease-in-out,
+        background    0.25s ease-in-out;
+    }
+
+    .finance-edit-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(96, 165, 250, 0.05);
+    }
+
+    /* Input inline — oculto por defecto, aparece al editar */
+    .finance-input {
+      display: none;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--accent);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      width: 120px;
+      outline: none;
+      padding: 0 0 2px;
+    }
+
+    /* Oculta el spinner nativo de input[type=number] */
+    .finance-input::-webkit-inner-spin-button,
+    .finance-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .finance-input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+    /* Estado edicion: intercambia value <-> input */
+    .finance-col--editing .finance-col__value { display: none; }
+    .finance-col--editing .finance-input      { display: inline-block; }
+    .finance-col--editing .finance-edit-btn   { display: none; }
+
+    /* Movil: columnas apiladas */
+    @media (max-width: 560px) {
+      .finance-row { flex-direction: column; gap: 1rem; }
+      .finance-col { padding: 0; }
+      .finance-col + .finance-col {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding-top: 1rem;
+      }
+    }
+
+    /* ============================================================
      * HEALTH & STACK — suplementos diarios con alerta temporal
      * ============================================================ */
 
@@ -965,6 +1108,76 @@
       </div>
     </div>
 
+    <!-- ── FINANCIAL OVERVIEW (4×1) ── -->
+    <div class="bento-card bento-card--full" id="card-finance">
+      <div class="card-accent-line"></div>
+
+      <!-- Eyebrow -->
+      <p class="card-eyebrow">Financial Overview</p>
+
+      <!-- Total Net Worth — numero grande centrado -->
+      <div class="finance-center">
+        <div class="finance-total" id="js-fin-total">$0.00</div>
+        <div class="finance-total-label">Total Net Worth</div>
+      </div>
+
+      <!-- Divisor -->
+      <div class="finance-divider"></div>
+
+      <!-- 3 sub-secciones -->
+      <div class="finance-row">
+
+        <!-- Bank Accounts -->
+        <div class="finance-col" id="fin-col-bank">
+          <span class="finance-col__label">Bank Accounts</span>
+          <div class="finance-col__value-row">
+            <span class="finance-col__value" id="fin-val-bank">$0.00</span>
+            <input type="number" class="finance-input" id="fin-input-bank"
+                   placeholder="0.00" step="0.01" autocomplete="off" />
+            <button class="finance-edit-btn" aria-label="Editar Bank Accounts">
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none"
+                   stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9.5 1.5l3 3L4 13l-3 .5.5-3L9.5 1.5z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Investments -->
+        <div class="finance-col" id="fin-col-investments">
+          <span class="finance-col__label">Investments</span>
+          <div class="finance-col__value-row">
+            <span class="finance-col__value" id="fin-val-investments">$0.00</span>
+            <input type="number" class="finance-input" id="fin-input-investments"
+                   placeholder="0.00" step="0.01" autocomplete="off" />
+            <button class="finance-edit-btn" aria-label="Editar Investments">
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none"
+                   stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9.5 1.5l3 3L4 13l-3 .5.5-3L9.5 1.5z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Crypto & Assets -->
+        <div class="finance-col" id="fin-col-crypto">
+          <span class="finance-col__label">Crypto &amp; Assets</span>
+          <div class="finance-col__value-row">
+            <span class="finance-col__value" id="fin-val-crypto">$0.00</span>
+            <input type="number" class="finance-input" id="fin-input-crypto"
+                   placeholder="0.00" step="0.01" autocomplete="off" />
+            <button class="finance-edit-btn" aria-label="Editar Crypto y Assets">
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none"
+                   stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9.5 1.5l3 3L4 13l-3 .5.5-3L9.5 1.5z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ── HEALTH & STACK (4×1) — suplementos diarios ── -->
     <div class="bento-card bento-card--full" id="card-health">
       <div class="card-accent-line"></div>
@@ -1306,7 +1519,99 @@
 
 
   /* ------------------------------------------------------------
-   * 6. HEALTH & STACK — suplementos con alerta de dosis olvidada
+   * 6. FINANCIAL OVERVIEW — resumen financiero editable
+   *
+   *    Cada sub-seccion (bank, investments, crypto) tiene un
+   *    boton de lapiz que abre un input inline. Al confirmar
+   *    (Enter o blur), actualiza el valor y recalcula el total.
+   *
+   *    Formato: $1,234,567.89  (toLocaleString 'en-US')
+   *    Negativo: prefijo '-$' y color rojo en el total.
+   *
+   *    Escape cancela la edicion sin guardar cambios.
+   * ---------------------------------------------------------- */
+  (function initFinance() {
+    const totalEl = document.getElementById('js-fin-total');
+    if (!totalEl) return;
+
+    /* Estado de cada categoria (en memoria) */
+    const values = { bank: 0, investments: 0, crypto: 0 };
+
+    /* Configuracion de las 3 sub-secciones */
+    const COLS = [
+      { key: 'bank'        },
+      { key: 'investments' },
+      { key: 'crypto'      },
+    ];
+
+    /* ---- Formatea un numero como moneda con signo ---- */
+    function fmt(n) {
+      const abs = Math.abs(n).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      return (n < 0 ? '-$' : '$') + abs;
+    }
+
+    /* ---- Recalcula y pinta el Total Net Worth ---- */
+    function updateTotal() {
+      const sum = Object.values(values).reduce((a, b) => a + b, 0);
+      totalEl.textContent = fmt(sum);
+      totalEl.classList.toggle('finance-total--negative', sum < 0);
+    }
+
+    /* ---- Configura cada columna de forma independiente ---- */
+    COLS.forEach(({ key }) => {
+      const colEl   = document.getElementById(`fin-col-${key}`);
+      const valEl   = document.getElementById(`fin-val-${key}`);
+      const inputEl = document.getElementById(`fin-input-${key}`);
+      const editBtn = colEl?.querySelector('.finance-edit-btn');
+      if (!colEl || !valEl || !inputEl || !editBtn) return;
+
+      let escaping = false; /* flag para ignorar blur tras Escape */
+
+      /* Abre el modo edicion */
+      function openEdit() {
+        colEl.classList.add('finance-col--editing');
+        inputEl.value = values[key] !== 0 ? values[key] : '';
+        inputEl.focus();
+        inputEl.select();
+      }
+
+      /* Guarda el valor y cierra el modo edicion */
+      function commitEdit() {
+        if (escaping) { escaping = false; return; }
+        const raw = parseFloat(inputEl.value) || 0;
+        values[key]       = raw;
+        valEl.textContent = fmt(raw);
+        valEl.style.color = raw < 0 ? '#EF4444' : '';
+        colEl.classList.remove('finance-col--editing');
+        updateTotal();
+      }
+
+      /* Cancela sin guardar */
+      function cancelEdit() {
+        escaping = true;
+        colEl.classList.remove('finance-col--editing');
+      }
+
+      editBtn.addEventListener('click', openEdit);
+
+      inputEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter')  { e.preventDefault(); commitEdit(); }
+        if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
+      });
+
+      /* blur guarda salvo que el usuario haya pulsado Escape */
+      inputEl.addEventListener('blur', commitEdit);
+    });
+
+    updateTotal();
+  })();
+
+
+  /* ------------------------------------------------------------
+   * 7. HEALTH & STACK — suplementos con alerta de dosis olvidada
    *
    *    Logica de estado:
    *    - Cada .health-check togglea su estado visual al hacer clic.
