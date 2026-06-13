@@ -604,6 +604,146 @@
     }
 
     /* ============================================================
+     * HEALTH & STACK — suplementos diarios con alerta temporal
+     * ============================================================ */
+
+    .health-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .health-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.3s ease-in-out;
+    }
+
+    .health-status__dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+      animation: pip 2s ease-in-out infinite;
+    }
+
+    .health-status--ok  { color: #34D399; }
+    .health-status--err { color: #EF4444; }
+
+    /* Dos secciones en grid lado a lado */
+    .health-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 2.5rem;
+    }
+
+    /* Titulo de seccion con linea decorativa */
+    .health-section__label {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.625rem;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      white-space: nowrap;
+    }
+
+    .health-section__label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      min-width: 12px;
+    }
+
+    /* Item de suplemento */
+    .health-item {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .health-item:last-child { border-bottom: none; }
+
+    /* Checkbox circular — mismo patron que Daily Focus */
+    .health-check {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-strong);
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background    0.2s ease-in-out,
+        border-color  0.2s ease-in-out;
+    }
+
+    .health-check svg       { display: none; }
+    .health-check--done     { background: var(--accent); border-color: var(--accent); }
+    .health-check--done svg { display: block; }
+
+    .health-text {
+      font-size: 0.84rem;
+      color: var(--fg);
+      flex: 1;
+      transition:
+        opacity         0.2s ease-in-out,
+        text-decoration 0.2s ease-in-out;
+    }
+
+    .health-text--done { text-decoration: line-through; opacity: 0.45; }
+
+    /* Pulso rojo sutil cuando se olvida la dosis matutina */
+    @keyframes alertPulse {
+      0%, 100% {
+        border-color: rgba(239, 68, 68, 0.22);
+        box-shadow:   0 0 0 rgba(239, 68, 68, 0);
+      }
+      50% {
+        border-color: rgba(239, 68, 68, 0.62);
+        box-shadow:   0 0 28px rgba(239, 68, 68, 0.12);
+      }
+    }
+
+    .bento-card--alert {
+      animation: alertPulse 2.5s ease-in-out infinite;
+    }
+
+    /* Hover en alerta: pausa el pulso y fija borde rojo */
+    .bento-card--alert:hover {
+      border-color: rgba(239, 68, 68, 0.55) !important;
+      box-shadow:   0 8px 32px rgba(239, 68, 68, 0.10) !important;
+      animation-play-state: paused;
+    }
+
+    /* Con reduced-motion: borde rojo estatico, sin animacion */
+    @media (prefers-reduced-motion: reduce) {
+      .bento-card--alert {
+        animation: none;
+        border-color: rgba(239, 68, 68, 0.55);
+      }
+    }
+
+    /* Secciones se apilan en pantallas medianas/movil */
+    @media (max-width: 680px) {
+      .health-sections { grid-template-columns: 1fr; gap: 1.25rem 0; }
+    }
+
+    /* ============================================================
      * RESPONSIVE
      * ============================================================ */
     @media (max-width: 980px) {
@@ -822,6 +962,85 @@
           <div class="stat-bar"><div class="stat-bar__fill" style="width: 35%;"></div></div>
           <span class="stat-val">5</span>
         </div>
+      </div>
+    </div>
+
+    <!-- ── HEALTH & STACK (4×1) — suplementos diarios ── -->
+    <div class="bento-card bento-card--full" id="card-health">
+      <div class="card-accent-line"></div>
+
+      <!-- Cabecera: titulo + badge de estado -->
+      <div class="health-header">
+        <p class="card-eyebrow" style="margin-bottom:0;">Health &amp; Stack</p>
+        <span class="health-status health-status--ok" id="js-health-status">
+          <span class="health-status__dot"></span>
+          Status: On Track
+        </span>
+      </div>
+
+      <!-- Dos secciones lado a lado -->
+      <div class="health-sections">
+
+        <!-- MORNING -->
+        <div class="health-section">
+          <div class="health-section__label">Morning &mdash; 7:00 AM &ndash; 11:00 AM</div>
+
+          <div class="health-item">
+            <button class="health-check health-check--morning" aria-label="Marcar Creatina como tomada">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+                   stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="1.5,5.5 4,8 8.5,2"/>
+              </svg>
+            </button>
+            <span class="health-text">Creatina (5g)</span>
+          </div>
+
+          <div class="health-item">
+            <button class="health-check health-check--morning" aria-label="Marcar Vitaminas como tomadas">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+                   stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="1.5,5.5 4,8 8.5,2"/>
+              </svg>
+            </button>
+            <span class="health-text">Vitaminas</span>
+          </div>
+
+          <div class="health-item">
+            <button class="health-check health-check--morning" aria-label="Marcar Cafeina como tomada">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+                   stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="1.5,5.5 4,8 8.5,2"/>
+              </svg>
+            </button>
+            <span class="health-text">Cafe&iacute;na</span>
+          </div>
+        </div>
+
+        <!-- AFTERNOON / EVENING -->
+        <div class="health-section">
+          <div class="health-section__label">Afternoon / Evening</div>
+
+          <div class="health-item">
+            <button class="health-check" aria-label="Marcar Magnesio como tomado">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+                   stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="1.5,5.5 4,8 8.5,2"/>
+              </svg>
+            </button>
+            <span class="health-text">Magnesio</span>
+          </div>
+
+          <div class="health-item">
+            <button class="health-check" aria-label="Marcar Omega 3 como tomado">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+                   stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="1.5,5.5 4,8 8.5,2"/>
+              </svg>
+            </button>
+            <span class="health-text">Omega 3</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1083,6 +1302,57 @@
 
     /* Estado inicial: ocultar empty si hay tareas (no hay al inicio) */
     syncEmpty();
+  })();
+
+
+  /* ------------------------------------------------------------
+   * 6. HEALTH & STACK — suplementos con alerta de dosis olvidada
+   *
+   *    Logica de estado:
+   *    - Cada .health-check togglea su estado visual al hacer clic.
+   *    - evaluate() se ejecuta al marcar/desmarcar y cada 60 s.
+   *    - Condicion de alerta: hora >= 11 Y algun Morning sin marcar.
+   *      → Clase .bento-card--alert en la tarjeta (pulso rojo CSS).
+   *      → Status badge cambia a "Missed Morning Dose" en rojo.
+   *    - Si todas las Morning estan marcadas (a cualquier hora):
+   *      → Sin alerta. Status "On Track" en verde.
+   * ---------------------------------------------------------- */
+  (function initHealthStack() {
+    const card      = document.getElementById('card-health');
+    const statusEl  = document.getElementById('js-health-status');
+    if (!card || !statusEl) return;
+
+    const allChecks     = card.querySelectorAll('.health-check');
+    const morningChecks = card.querySelectorAll('.health-check--morning');
+
+    /* ---- Toggle visual del checkbox ---- */
+    allChecks.forEach(btn => {
+      btn.addEventListener('click', function () {
+        this.classList.toggle('health-check--done');
+        const txt = this.nextElementSibling;
+        if (txt) txt.classList.toggle('health-text--done',
+          this.classList.contains('health-check--done'));
+        evaluate();
+      });
+    });
+
+    /* ---- Evalua si debe activarse la alerta ---- */
+    function evaluate() {
+      const hour          = new Date().getHours();
+      const allMorningOk  = Array.from(morningChecks)
+                              .every(b => b.classList.contains('health-check--done'));
+      const missed        = hour >= 11 && !allMorningOk;
+
+      card.classList.toggle('bento-card--alert', missed);
+
+      statusEl.className = `health-status ${missed ? 'health-status--err' : 'health-status--ok'}`;
+      statusEl.innerHTML = `<span class="health-status__dot"></span> ${
+        missed ? 'Status: Missed Morning Dose' : 'Status: On Track'
+      }`;
+    }
+
+    evaluate();
+    setInterval(evaluate, 60_000); /* re-evalua cada minuto */
   })();
 
 </script>
