@@ -604,6 +604,204 @@
     }
 
     /* ============================================================
+     * DAILY PEAK & VITALS — water tracker + energy meter
+     * ============================================================ */
+
+    /* Grid interno: Water (izq) | Energy (der) */
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 2.5rem;
+      margin-top: 0.625rem;
+    }
+
+    .vitals-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+
+    .vitals-section + .vitals-section {
+      border-left: 1px solid var(--border);
+      padding-left: 2.5rem;
+    }
+
+    .vitals-section-title {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── Water Intake ── */
+    .water-display {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .water-count {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--fg);
+      transition: color 0.3s ease-in-out;
+    }
+
+    .water-count--done { color: #34D399; }
+
+    .water-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      transition: color 0.3s ease-in-out;
+    }
+
+    .water-label--done { color: #34D399; }
+
+    /* Icono check (oculto hasta completar los 8 vasos) */
+    .water-check             { display: none; align-items: center; margin-left: 0.25rem; }
+    .water-check--visible    { display: inline-flex; }
+
+    /* 8 puntos indicadores */
+    .water-dots {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .water-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--border-strong);
+      transition:
+        background  0.2s ease-in-out,
+        box-shadow  0.2s ease-in-out;
+    }
+
+    .water-dot--filled {
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .water-dot--done {
+      background: #34D399;
+      box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
+    }
+
+    /* Botones circulares − y + */
+    .water-controls { display: flex; align-items: center; gap: 0.625rem; }
+
+    .water-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border-strong);
+      background: transparent;
+      color: var(--fg);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        border-color  0.2s ease-in-out,
+        background    0.2s ease-in-out,
+        color         0.2s ease-in-out;
+    }
+
+    .water-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(96, 165, 250, 0.08);
+      color: var(--accent);
+    }
+
+    .water-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── Energy Level ── */
+    .energy-value {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--fg);
+    }
+
+    .energy-bar-track {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 0.5rem 0 0.375rem;
+    }
+
+    .energy-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition:
+        width       0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        background  0.4s ease-in-out,
+        box-shadow  0.4s ease-in-out;
+      will-change: width;
+    }
+
+    /* Colores segun nivel de energia */
+    .energy-bar-fill--high     { background: linear-gradient(90deg, #34D399, #6EE7B7); box-shadow: 0 0 10px rgba(52,211,153,.35); }
+    .energy-bar-fill--medium   { background: linear-gradient(90deg, var(--accent), #93C5FD); box-shadow: 0 0 10px var(--accent-glow); }
+    .energy-bar-fill--low      { background: linear-gradient(90deg, #F59E0B, #FCD34D); box-shadow: 0 0 10px rgba(245,158,11,.30); }
+    .energy-bar-fill--critical { background: linear-gradient(90deg, #EF4444, #F87171); box-shadow: 0 0 10px rgba(239,68,68,.30); }
+
+    .energy-status {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.625rem;
+    }
+
+    /* Boton de estimulante */
+    .stimulant-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.5rem 0.875rem;
+      background: rgba(96, 165, 250, 0.07);
+      border: 1px solid rgba(96, 165, 250, 0.22);
+      border-radius: var(--radius-md);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition:
+        background   0.25s ease-in-out,
+        border-color 0.25s ease-in-out;
+    }
+
+    .stimulant-btn:hover:not(:disabled) {
+      background: rgba(96, 165, 250, 0.14);
+      border-color: rgba(96, 165, 250, 0.45);
+    }
+
+    .stimulant-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* Movil: secciones apiladas */
+    @media (max-width: 680px) {
+      .vitals-grid { grid-template-columns: 1fr; gap: 1.5rem 0; }
+      .vitals-section + .vitals-section {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding-left: 0;
+        padding-top: 1.5rem;
+      }
+    }
+
+    /* ============================================================
      * FINANCIAL OVERVIEW — resumen financiero
      * ============================================================ */
 
@@ -1108,6 +1306,66 @@
       </div>
     </div>
 
+    <!-- ── DAILY PEAK & VITALS (4×1) ── -->
+    <div class="bento-card bento-card--full" id="card-vitals">
+      <div class="card-accent-line"></div>
+      <p class="card-eyebrow">Daily Peak &amp; Vitals</p>
+
+      <div class="vitals-grid">
+
+        <!-- WATER INTAKE -->
+        <div class="vitals-section">
+          <p class="vitals-section-title">Water Intake</p>
+
+          <div class="water-display">
+            <span class="water-count" id="js-water-count">0</span>
+            <span class="water-label" id="js-water-label">/ 8 Vasos</span>
+            <span class="water-check" id="js-water-check" aria-label="Completado">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                   stroke="#34D399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="2,9 6,13 14,4"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="water-dots" id="js-water-dots" role="img" aria-label="Indicador de vasos bebidos"></div>
+
+          <div class="water-controls">
+            <button class="water-btn" id="js-water-dec" aria-label="Quitar un vaso" disabled>&#8722;</button>
+            <button class="water-btn" id="js-water-inc" aria-label="Añadir un vaso">&#43;</button>
+          </div>
+        </div>
+
+        <!-- CURRENT ENERGY LEVEL -->
+        <div class="vitals-section">
+          <p class="vitals-section-title">Current Energy Level</p>
+
+          <div class="energy-value" id="js-energy-val">80%</div>
+          <div class="energy-bar-track">
+            <div class="energy-bar-fill energy-bar-fill--high"
+                 id="js-energy-bar"
+                 style="width: 80%;"
+                 role="progressbar"
+                 aria-valuenow="80"
+                 aria-valuemin="0"
+                 aria-valuemax="100"
+                 aria-label="Nivel de energia"></div>
+          </div>
+          <div class="energy-status" id="js-energy-status">Optimal performance</div>
+
+          <button class="stimulant-btn" id="js-stimulant-btn">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <line x1="6" y1="1" x2="6" y2="11"/>
+              <line x1="1" y1="6" x2="11" y2="6"/>
+            </svg>
+            Stimulant (Caffeine) +15%
+          </button>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ── FINANCIAL OVERVIEW (4×1) ── -->
     <div class="bento-card bento-card--full" id="card-finance">
       <div class="card-accent-line"></div>
@@ -1519,7 +1777,120 @@
 
 
   /* ------------------------------------------------------------
-   * 6. FINANCIAL OVERVIEW — resumen financiero editable
+   * 6. DAILY PEAK & VITALS — Water Tracker + Energy Meter
+   *
+   *    Water Intake:
+   *    - Contador 0–8 con botones circulares − y +.
+   *    - 8 puntos que se van rellenando (azul) hasta completar.
+   *    - Al llegar a 8: count y label en verde, check visible.
+   *
+   *    Energy Level:
+   *    - Inicia en 80%. setInterval descuenta 1 % cada minuto.
+   *    - Boton "+Stimulant" suma 15 % (tope 100 %).
+   *    - La barra cambia de color segun el nivel:
+   *        >= 70 % verde · 40-69 % azul · 20-39 % ambar · <20 % rojo
+   * ---------------------------------------------------------- */
+  (function initVitals() {
+
+    /* ── WATER INTAKE ─────────────────────────────────────── */
+    const waterCountEl = document.getElementById('js-water-count');
+    const waterLabelEl = document.getElementById('js-water-label');
+    const waterCheckEl = document.getElementById('js-water-check');
+    const waterDotsEl  = document.getElementById('js-water-dots');
+    const waterDecBtn  = document.getElementById('js-water-dec');
+    const waterIncBtn  = document.getElementById('js-water-inc');
+
+    const WATER_MAX = 8;
+    let waterVal    = 0;
+
+    /* Genera los 8 puntos indicadores una sola vez en el DOM */
+    const dots = [];
+    if (waterDotsEl) {
+      for (let i = 0; i < WATER_MAX; i++) {
+        const d = document.createElement('span');
+        d.className = 'water-dot';
+        waterDotsEl.appendChild(d);
+        dots.push(d);
+      }
+    }
+
+    function renderWater() {
+      if (!waterCountEl) return;
+      const done = waterVal >= WATER_MAX;
+
+      waterCountEl.textContent = waterVal;
+      waterCountEl.classList.toggle('water-count--done', done);
+      if (waterLabelEl) waterLabelEl.classList.toggle('water-label--done', done);
+      if (waterCheckEl) waterCheckEl.classList.toggle('water-check--visible', done);
+
+      /* Actualiza los 8 puntos */
+      dots.forEach((dot, i) => {
+        const filled = i < waterVal;
+        dot.classList.toggle('water-dot--filled', filled && !done);
+        dot.classList.toggle('water-dot--done',   filled &&  done);
+        if (!filled) dot.className = 'water-dot'; /* reset a vacio */
+      });
+
+      if (waterDecBtn) waterDecBtn.disabled = waterVal <= 0;
+      if (waterIncBtn) waterIncBtn.disabled = waterVal >= WATER_MAX;
+    }
+
+    waterDecBtn?.addEventListener('click', () => { if (waterVal > 0)        { waterVal--; renderWater(); } });
+    waterIncBtn?.addEventListener('click', () => { if (waterVal < WATER_MAX) { waterVal++; renderWater(); } });
+
+    renderWater(); /* estado inicial */
+
+
+    /* ── ENERGY LEVEL ─────────────────────────────────────── */
+    const energyValEl  = document.getElementById('js-energy-val');
+    const energyBarEl  = document.getElementById('js-energy-bar');
+    const energyStatEl = document.getElementById('js-energy-status');
+    const stimBtn      = document.getElementById('js-stimulant-btn');
+    if (!energyValEl || !energyBarEl || !energyStatEl || !stimBtn) return;
+
+    let energy = 80; /* porcentaje inicial */
+
+    /* Devuelve clase CSS + texto de estado segun el nivel */
+    function getLevel(pct) {
+      if (pct >= 70) return { cls: 'energy-bar-fill--high',     label: 'Optimal performance'           };
+      if (pct >= 40) return { cls: 'energy-bar-fill--medium',   label: 'Steady — on track'             };
+      if (pct >= 20) return { cls: 'energy-bar-fill--low',      label: 'Fading — consider a break'     };
+      return             { cls: 'energy-bar-fill--critical', label: 'Low energy — rest recommended' };
+    }
+
+    function renderEnergy() {
+      const pct = Math.round(Math.max(0, Math.min(100, energy)));
+      const lvl = getLevel(pct);
+
+      energyValEl.textContent  = `${pct}%`;
+      energyBarEl.style.width  = `${pct}%`;
+      energyBarEl.setAttribute('aria-valuenow', pct);
+      energyBarEl.className    = `energy-bar-fill ${lvl.cls}`;
+      energyStatEl.textContent = lvl.label;
+
+      stimBtn.disabled = pct >= 100; /* deshabilita cuando ya esta al maximo */
+    }
+
+    /* Suma 15 % al pulsar el estimulante */
+    stimBtn.addEventListener('click', () => {
+      energy = Math.min(100, energy + 15);
+      renderEnergy();
+    });
+
+    /* Resta 1 % por minuto para simular cansancio */
+    setInterval(() => {
+      if (energy > 0) {
+        energy = Math.max(0, energy - 1);
+        renderEnergy();
+      }
+    }, 60_000);
+
+    renderEnergy(); /* estado inicial */
+  })();
+
+
+  /* ------------------------------------------------------------
+   * 7. FINANCIAL OVERVIEW — resumen financiero editable
    *
    *    Cada sub-seccion (bank, investments, crypto) tiene un
    *    boton de lapiz que abre un input inline. Al confirmar
@@ -1611,7 +1982,7 @@
 
 
   /* ------------------------------------------------------------
-   * 7. HEALTH & STACK — suplementos con alerta de dosis olvidada
+   * 8. HEALTH & STACK — suplementos con alerta de dosis olvidada
    *
    *    Logica de estado:
    *    - Cada .health-check togglea su estado visual al hacer clic.
