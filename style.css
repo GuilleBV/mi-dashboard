@@ -502,6 +502,251 @@ body::before {
   }
 }
 
+/* ============================================================
+ * GYM SECTION
+ * ============================================================ */
+
+/* ── Hevy sync button ── */
+.btn-hevy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 0.875rem;
+  background: var(--accent-deep);
+  border: 1px solid rgba(96,165,250,.30);
+  border-radius: var(--radius-md);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.btn-hevy:hover {
+  background: rgba(96,165,250,.15);
+  border-color: rgba(96,165,250,.5);
+}
+
+/* ── Supplements ── */
+.supps-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.875rem;
+}
+
+.supp-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.supp-item input[type="checkbox"] {
+  display: none;
+}
+
+.supp-check-box {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-strong);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.supp-item input:checked + .supp-check-box {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.supp-item input:checked + .supp-check-box::after {
+  content: '';
+  width: 4px;
+  height: 8px;
+  border: 2px solid #000;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+  display: block;
+}
+
+.supp-name {
+  font-size: 0.9rem;
+  color: var(--muted-strong);
+  transition: color .2s ease;
+}
+
+.supp-item input:checked ~ .supp-name {
+  color: var(--fg);
+}
+
+.supps-done-msg {
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.10em;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+
+/* Card glows when all supplements are checked */
+#js-supps-card.all-done {
+  border-color: rgba(96,165,250,.45);
+  box-shadow: 0 0 28px rgba(96,165,250,.14), inset 0 0 20px rgba(96,165,250,.04);
+}
+
+#js-supps-card.all-done .supps-done-msg {
+  opacity: 1;
+}
+
+/* ── Progressive Overload form ── */
+.po-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.875rem;
+}
+
+.po-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+}
+
+.gym-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--fg);
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  outline: none;
+  -webkit-appearance: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.gym-input::placeholder { color: var(--muted); }
+
+.gym-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(96,165,250,.12);
+}
+
+/* Hide number spinners */
+.gym-input[type="number"]::-webkit-outer-spin-button,
+.gym-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.gym-input[type="number"] { -moz-appearance: textfield; }
+
+/* ── Primary button ── */
+.btn-primary {
+  padding: 0.75rem 1.25rem;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-md);
+  color: #000;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 20px rgba(96,165,250,.35);
+}
+
+.btn-primary:active {
+  transform: scale(.97);
+}
+
+/* ── Smart coach message ── */
+.coach-msg {
+  display: none;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid rgba(96,165,250,.40);
+  border-radius: var(--radius-md);
+  background: rgba(96,165,250,.06);
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.coach-msg.visible {
+  display: block;
+  animation: fadeSlideIn .35s var(--ease-premium) both;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Workout Log ── */
+.workout-log {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+}
+
+.workout-log__empty {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+.workout-log__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--card-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  animation: fadeSlideIn .3s var(--ease-premium) both;
+}
+
+.workout-log__set-num {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.10em;
+  color: var(--muted);
+  min-width: 24px;
+}
+
+.workout-log__name {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--muted-strong);
+}
+
+.workout-log__stats {
+  font-family: var(--font-mono);
+  font-size: 0.80rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* ============================================================
+ * REDUCED MOTION (keep before the existing rule below)
+ * ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .bento-card           { transition: none; }
   .bento-card:hover     { transform: none; }
