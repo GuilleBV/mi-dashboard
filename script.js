@@ -60,101 +60,155 @@
 })();
 
 
-/* ── GYM ────────────────────────────────────────────────────── */
+/* ── HEVY MOCK DATA ──────────────────────────────────────────── */
+const hevyMockData = [
+  {
+    fecha: '2026-06-02',
+    nombreRutina: 'Día de Pecho',
+    duracion: '54 min',
+    ejercicios: [
+      { nombre: 'Press de Banca',                 series: 4, reps: 8,  peso: 80  },
+      { nombre: 'Press Inclinado con Mancuernas', series: 3, reps: 10, peso: 28  },
+      { nombre: 'Aperturas en Polea',             series: 3, reps: 12, peso: 15  },
+    ]
+  },
+  {
+    fecha: '2026-06-05',
+    nombreRutina: 'Piernas & Glúteos',
+    duracion: '61 min',
+    ejercicios: [
+      { nombre: 'Sentadilla con Barra',    series: 5, reps: 5,  peso: 100 },
+      { nombre: 'Prensa',                  series: 4, reps: 10, peso: 160 },
+      { nombre: 'Curl Femoral',            series: 3, reps: 12, peso: 40  },
+      { nombre: 'Extensión de Cuádriceps', series: 3, reps: 12, peso: 50  },
+    ]
+  },
+  {
+    fecha: '2026-06-09',
+    nombreRutina: 'Hombros & Tríceps',
+    duracion: '48 min',
+    ejercicios: [
+      { nombre: 'Press Militar',         series: 4, reps: 8,  peso: 55 },
+      { nombre: 'Elevaciones Laterales', series: 3, reps: 15, peso: 12 },
+      { nombre: 'Press Francés',         series: 3, reps: 10, peso: 30 },
+    ]
+  },
+  {
+    fecha: '2026-06-12',
+    nombreRutina: 'Espalda & Bíceps',
+    duracion: '57 min',
+    ejercicios: [
+      { nombre: 'Peso Muerto',    series: 4, reps: 5,  peso: 110 },
+      { nombre: 'Remo con Barra', series: 4, reps: 8,  peso: 70  },
+      { nombre: 'Jalón al Pecho', series: 3, reps: 10, peso: 65  },
+      { nombre: 'Curl con Barra', series: 3, reps: 12, peso: 35  },
+    ]
+  },
+];
+
+
+/* ── GYM: CALENDAR ───────────────────────────────────────────── */
+function renderCalendar() {
+  const container = document.getElementById('js-activity-calendar');
+  const eyebrow   = document.getElementById('js-cal-eyebrow');
+  if (!container) return;
+
+  const now   = new Date();
+  const year  = now.getFullYear();
+  const month = now.getMonth();
+  const today = now.getDate();
+
+  const workoutDates = new Set(hevyMockData.map(w => w.fecha));
+  const daysInMonth  = new Date(year, month + 1, 0).getDate();
+  // Monday-first offset: Sun(0)→6, Mon(1)→0, Tue(2)→1 …
+  const startOffset  = (new Date(year, month, 1).getDay() + 6) % 7;
+
+  const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                       'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const WEEK_DAYS   = ['L','M','X','J','V','S','D'];
+
+  let html = '<div class="cal-weekdays">';
+  WEEK_DAYS.forEach(d => { html += `<span class="cal-wd">${d}</span>`; });
+  html += '</div><div class="cal-grid">';
+
+  for (let i = 0; i < startOffset; i++) {
+    html += '<div class="cal-cell cal-cell--empty"></div>';
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const classes = ['cal-cell'];
+    if (workoutDates.has(dateStr)) classes.push('cal-cell--workout');
+    if (d === today)               classes.push('cal-cell--today');
+    if (d > today)                 classes.push('cal-cell--future');
+    html += `<div class="${classes.join(' ')}" title="${dateStr}">${d}</div>`;
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+
+  if (eyebrow) eyebrow.textContent = `Actividad · ${MONTH_NAMES[month]} ${year}`;
+}
+
+
+/* ── GYM: WORKOUT HISTORY ────────────────────────────────────── */
+function renderWorkoutHistory() {
+  const container = document.getElementById('js-workout-history');
+  if (!container) return;
+
+  const sorted = [...hevyMockData].sort((a, b) => b.fecha.localeCompare(a.fecha));
+
+  container.innerHTML = sorted.map((w, i) => {
+    const [y, m, d] = w.fecha.split('-').map(Number);
+    const dateLabel  = new Date(y, m - 1, d).toLocaleDateString('es-ES', {
+      weekday: 'long', day: 'numeric', month: 'long'
+    });
+
+    const rows = w.ejercicios.map(e =>
+      `<div class="ex-row">
+         <span class="ex-name">${e.nombre}</span>
+         <span class="ex-stats">${e.series}×${e.reps} — ${e.peso} kg</span>
+       </div>`
+    ).join('');
+
+    return `
+      <details class="wo-accordion" ${i === 0 ? 'open' : ''}>
+        <summary class="wo-summary">
+          <div class="wo-summary__info">
+            <span class="wo-date">${dateLabel}</span>
+            <span class="wo-name">${w.nombreRutina}</span>
+          </div>
+          <div class="wo-summary__meta">
+            <span class="wo-duration">${w.duracion}</span>
+            <span class="wo-chevron" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+          </div>
+        </summary>
+        <div class="wo-body">${rows}</div>
+      </details>`;
+  }).join('');
+}
+
+
+/* ── GYM: INIT ───────────────────────────────────────────────── */
 (function initGym() {
-  const suppChecks  = document.querySelectorAll('.supp-check');
-  const suppsCard   = document.getElementById('js-supps-card');
-  const exerciseEl  = document.getElementById('po-exercise');
-  const weightEl    = document.getElementById('po-weight');
-  const repsEl      = document.getElementById('po-reps');
-  const registerBtn = document.getElementById('js-register-set');
-  const coachMsg    = document.getElementById('js-coach-msg');
-  const logEl       = document.getElementById('js-workout-log');
-  const syncBtn     = document.getElementById('js-sync-hevy');
+  renderCalendar();
+  renderWorkoutHistory();
 
-  if (!suppsCard || !registerBtn || !logEl) return;
+  const syncBtn = document.getElementById('js-gym-sync');
+  if (!syncBtn) return;
 
-  let setCount = 0;
-  let coachTimer = null;
-
-  // ── Supplements: glow when all checked ──────────────────────
-  function refreshSupps() {
-    const allDone = [...suppChecks].every(c => c.checked);
-    suppsCard.classList.toggle('all-done', allDone);
-  }
-  suppChecks.forEach(c => c.addEventListener('change', refreshSupps));
-
-  // ── Register set ─────────────────────────────────────────────
-  function registerSet() {
-    const exercise = exerciseEl.value.trim();
-    const weight   = parseFloat(weightEl.value);
-    const reps     = parseInt(repsEl.value, 10);
-
-    if (!exercise || isNaN(weight) || weight < 0 || isNaN(reps) || reps < 1) {
-      exerciseEl.focus();
-      return;
-    }
-
-    // Remove "empty" placeholder on first entry
-    const emptyEl = logEl.querySelector('.workout-log__empty');
-    if (emptyEl) emptyEl.remove();
-
-    setCount++;
-    const li = document.createElement('li');
-    li.className = 'workout-log__item';
-    li.innerHTML = `
-      <span class="workout-log__set-num">S${setCount}</span>
-      <span class="workout-log__name">${escHtml(exercise)}</span>
-      <span class="workout-log__stats">${weight} kg × ${reps} reps</span>
-    `;
-    logEl.appendChild(li);
-
-    // Clear numeric inputs; keep exercise for quick re-use
-    weightEl.value = '';
-    repsEl.value   = '';
-    weightEl.focus();
-
-    // ── Smart coach ─────────────────────────────────────────
-    clearTimeout(coachTimer);
-    if (reps >= 8) {
-      coachMsg.textContent = '¡Objetivo cumplido! Sube el peso en la próxima sesión.';
-      coachMsg.classList.remove('visible');
-      // Force reflow so animation re-triggers on repeated entries
-      void coachMsg.offsetWidth;
-      coachMsg.classList.add('visible');
-      coachTimer = setTimeout(() => coachMsg.classList.remove('visible'), 4500);
-    } else {
-      coachMsg.classList.remove('visible');
-    }
-  }
-
-  registerBtn.addEventListener('click', registerSet);
-
-  // Enter key on any input triggers register
-  [exerciseEl, weightEl, repsEl].forEach(el => {
-    el.addEventListener('keydown', e => { if (e.key === 'Enter') registerSet(); });
-  });
-
-  // ── Hevy sync (stub — API pendiente) ─────────────────────────
+  let syncing = false;
   syncBtn.addEventListener('click', () => {
-    syncBtn.textContent = 'Próximamente…';
-    syncBtn.disabled = true;
+    if (syncing) return;
+    syncing = true;
+    syncBtn.innerHTML = '<span class="sync-dot"></span> Sincronizando…';
     setTimeout(() => {
-      syncBtn.innerHTML = `
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="23 4 23 10 17 10"/>
-          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-        </svg>
-        Sincronizar Hevy PRO`;
-      syncBtn.disabled = false;
-    }, 1800);
+      syncBtn.innerHTML = '<span class="sync-dot"></span> Sincronizado';
+      syncing = false;
+    }, 1500);
   });
-
-  function escHtml(str) {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
 })();

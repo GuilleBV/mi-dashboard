@@ -97,77 +97,32 @@
         </div>
         <div style="flex: 1;">
           <p class="section-header__label">Sección</p>
-          <h2 class="section-header__title">Entrenamiento</h2>
+          <h2 class="section-header__title">Gym &amp; Hevy</h2>
         </div>
-        <button class="btn-hevy" id="js-sync-hevy" aria-label="Sincronizar con Hevy PRO">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="23 4 23 10 17 10"/>
-            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-          </svg>
-          Sincronizar Hevy PRO
+        <button class="sync-badge" id="js-gym-sync" aria-label="Estado de sincronización Hevy">
+          <span class="sync-dot"></span>
+          Sincronizado
         </button>
       </header>
 
       <div class="bento-grid">
 
-        <!-- SUPLEMENTOS (2 cols) -->
-        <div class="bento-card bento-card--wide" id="js-supps-card">
+        <!-- CALENDARIO DE ACTIVIDAD (full width) -->
+        <div class="bento-card bento-card--full">
           <div class="card-accent-line"></div>
-          <p class="card-eyebrow">Suplementos · Hoy</p>
-          <ul class="supps-list" role="list">
-            <li>
-              <label class="supp-item">
-                <input type="checkbox" class="supp-check" id="supp-creatina">
-                <span class="supp-check-box" aria-hidden="true"></span>
-                <span class="supp-name">Creatina</span>
-              </label>
-            </li>
-            <li>
-              <label class="supp-item">
-                <input type="checkbox" class="supp-check" id="supp-proteina">
-                <span class="supp-check-box" aria-hidden="true"></span>
-                <span class="supp-name">Proteína</span>
-              </label>
-            </li>
-            <li>
-              <label class="supp-item">
-                <input type="checkbox" class="supp-check" id="supp-vitaminas">
-                <span class="supp-check-box" aria-hidden="true"></span>
-                <span class="supp-name">Vitaminas</span>
-              </label>
-            </li>
-          </ul>
-          <p class="supps-done-msg" id="js-supps-done" aria-live="polite">✓ Stack completo del día</p>
-        </div>
-
-        <!-- SOBRECARGA PROGRESIVA (2 cols) -->
-        <div class="bento-card bento-card--wide">
-          <div class="card-accent-line"></div>
-          <p class="card-eyebrow">Sobrecarga Progresiva</p>
-          <div class="po-form">
-            <input
-              type="text"
-              class="gym-input"
-              id="po-exercise"
-              placeholder="Ejercicio (ej. Press de Banca)"
-              autocomplete="off"
-            />
-            <div class="po-row">
-              <input type="number" class="gym-input" id="po-weight" placeholder="Peso (kg)" min="0" step="0.5" />
-              <input type="number" class="gym-input" id="po-reps"   placeholder="Reps"      min="1" step="1"   />
-            </div>
-            <button class="btn-primary" id="js-register-set">Registrar Serie</button>
-            <div class="coach-msg" id="js-coach-msg" role="status" aria-live="polite"></div>
+          <p class="card-eyebrow" id="js-cal-eyebrow">Actividad · Este mes</p>
+          <div id="js-activity-calendar" class="activity-calendar"></div>
+          <div class="cal-legend">
+            <span class="cal-legend__item cal-legend__item--rest">Sin entreno</span>
+            <span class="cal-legend__item cal-legend__item--workout">Con entreno</span>
           </div>
         </div>
 
-        <!-- HISTORIAL (full width) -->
+        <!-- HISTORIAL DE ENTRENOS (full width) -->
         <div class="bento-card bento-card--full">
           <div class="card-accent-line"></div>
-          <p class="card-eyebrow">Historial · Sesión de hoy</p>
-          <ul class="workout-log" id="js-workout-log" role="list">
-            <li class="workout-log__empty">Registra tu primera serie arriba</li>
-          </ul>
+          <p class="card-eyebrow">Historial de Entrenos</p>
+          <div id="js-workout-history" class="wo-history"></div>
         </div>
 
       </div>
