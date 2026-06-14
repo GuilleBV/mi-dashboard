@@ -123,31 +123,33 @@ function renderCalendar() {
   // Monday-first offset: Sun(0)→6, Mon(1)→0, Tue(2)→1 …
   const startOffset  = (new Date(year, month, 1).getDay() + 6) % 7;
 
-  const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                       'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const MONTH_NAMES = ['Ene','Feb','Mar','Abr','May','Jun',
+                       'Jul','Ago','Sep','Oct','Nov','Dic'];
   const WEEK_DAYS   = ['L','M','X','J','V','S','D'];
 
-  let html = '<div class="cal-weekdays">';
-  WEEK_DAYS.forEach(d => { html += `<span class="cal-wd">${d}</span>`; });
-  html += '</div><div class="cal-grid">';
+  // Single grid: header row immediately followed by day cells
+  let html = '<div class="mini-cal-grid">';
+
+  WEEK_DAYS.forEach(d => { html += `<span class="mini-cal-wd">${d}</span>`; });
 
   for (let i = 0; i < startOffset; i++) {
-    html += '<div class="cal-cell cal-cell--empty"></div>';
+    html += '<div class="mini-cal-cell mini-cal-cell--empty"></div>';
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const classes = ['cal-cell'];
-    if (workoutDates.has(dateStr)) classes.push('cal-cell--workout');
-    if (d === today)               classes.push('cal-cell--today');
-    if (d > today)                 classes.push('cal-cell--future');
-    html += `<div class="${classes.join(' ')}" title="${dateStr}">${d}</div>`;
+    const classes = ['mini-cal-cell'];
+    if (workoutDates.has(dateStr)) classes.push('mini-cal-cell--workout');
+    if (d === today)               classes.push('mini-cal-cell--today');
+    if (d > today)                 classes.push('mini-cal-cell--future');
+    // No text content — pure color squares
+    html += `<div class="${classes.join(' ')}" title="${dateStr}"></div>`;
   }
 
   html += '</div>';
   container.innerHTML = html;
 
-  if (eyebrow) eyebrow.textContent = `Actividad · ${MONTH_NAMES[month]} ${year}`;
+  if (eyebrow) eyebrow.textContent = `${MONTH_NAMES[month]} ${year}`;
 }
 
 
@@ -198,6 +200,28 @@ function renderWorkoutHistory() {
   renderCalendar();
   renderWorkoutHistory();
 
+  // Supplement time blocks: tap to toggle .completed
+  const suppsCard  = document.getElementById('js-supps-card');
+  const suppBlocks = suppsCard ? suppsCard.querySelectorAll('.supplement-block') : [];
+
+  function refreshSupps() {
+    const allDone = [...suppBlocks].every(b => b.classList.contains('completed'));
+    if (suppsCard) suppsCard.classList.toggle('all-done', allDone);
+  }
+
+  suppBlocks.forEach(block => {
+    block.addEventListener('click', () => {
+      block.classList.toggle('completed');
+      block.setAttribute('aria-pressed', block.classList.contains('completed'));
+      refreshSupps();
+    });
+    // Keyboard support (Enter / Space)
+    block.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); block.click(); }
+    });
+  });
+
+  // Sync badge — visual feedback (Hevy API pendiente)
   const syncBtn = document.getElementById('js-gym-sync');
   if (!syncBtn) return;
 

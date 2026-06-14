@@ -105,27 +105,85 @@
         </button>
       </header>
 
-      <div class="bento-grid">
+      <!-- TOP: dos columnas — Suplementos | Mini-Calendario -->
+      <div class="gym-top-grid">
 
-        <!-- CALENDARIO DE ACTIVIDAD (full width) -->
-        <div class="bento-card bento-card--full">
+        <!-- SUPLEMENTOS (izquierda) -->
+        <div class="bento-card" id="js-supps-card">
           <div class="card-accent-line"></div>
-          <p class="card-eyebrow" id="js-cal-eyebrow">Actividad · Este mes</p>
-          <div id="js-activity-calendar" class="activity-calendar"></div>
-          <div class="cal-legend">
-            <span class="cal-legend__item cal-legend__item--rest">Sin entreno</span>
-            <span class="cal-legend__item cal-legend__item--workout">Con entreno</span>
-          </div>
+          <p class="card-eyebrow">Suplementos</p>
+
+          <div class="supps-blocks">
+
+            <div class="supplement-block" role="button" tabindex="0" aria-pressed="false">
+              <span class="sb-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 12a5 5 0 0 0-10 0"/>
+                  <line x1="12" y1="9" x2="12" y2="7"/>
+                  <line x1="5.64" y1="9.64" x2="6.35" y2="10.35"/>
+                  <line x1="18.36" y1="9.64" x2="17.65" y2="10.35"/>
+                  <line x1="3" y1="16" x2="21" y2="16"/>
+                </svg>
+              </span>
+              <div class="sb-text">
+                <span class="sb-title">Mañana</span>
+                <span class="sb-sub">Vitaminas · Omega 3</span>
+              </div>
+            </div>
+
+            <div class="supplement-block" role="button" tabindex="0" aria-pressed="false">
+              <span class="sb-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <line x1="12" y1="2" x2="12" y2="4"/>
+                  <line x1="12" y1="20" x2="12" y2="22"/>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                  <line x1="2" y1="12" x2="4" y2="12"/>
+                  <line x1="20" y1="12" x2="22" y2="12"/>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+              </span>
+              <div class="sb-text">
+                <span class="sb-title">Mediodía</span>
+                <span class="sb-sub">Creatina · Proteína</span>
+              </div>
+            </div>
+
+            <div class="supplement-block" role="button" tabindex="0" aria-pressed="false">
+              <span class="sb-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <div class="sb-text">
+                <span class="sb-title">Noche</span>
+                <span class="sb-sub">Magnesio</span>
+              </div>
+            </div>
+
+          </div><!-- /.supps-blocks -->
+
+          <p class="supps-done-msg" id="js-supps-done" aria-live="polite">✓ Stack completo</p>
         </div>
 
-        <!-- HISTORIAL DE ENTRENOS (full width) -->
-        <div class="bento-card bento-card--full">
+        <!-- MINI-CALENDARIO (derecha) -->
+        <div class="bento-card gym-cal-card">
           <div class="card-accent-line"></div>
-          <p class="card-eyebrow">Historial de Entrenos</p>
-          <div id="js-workout-history" class="wo-history"></div>
+          <p class="card-eyebrow" id="js-cal-eyebrow">Actividad</p>
+          <div id="js-activity-calendar" class="mini-calendar"></div>
         </div>
 
       </div>
+
+      <!-- BOTTOM: ancho completo -->
+      <div class="bento-card gym-history-card">
+        <div class="card-accent-line"></div>
+        <p class="card-eyebrow">Historial de Entrenos</p>
+        <div id="js-workout-history" class="wo-history"></div>
+      </div>
+
     </div>
   </section>
 
