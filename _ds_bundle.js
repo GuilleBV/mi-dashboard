@@ -715,7 +715,7 @@ try { (() => {
 // mi-dashboard · Mock application state (appData)
 window.appData = {
   user: {
-    name: "Mateo"
+    name: "Guille"
   },
   overview: {
     netWorth: "€48.250",

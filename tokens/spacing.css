@@ -41,7 +41,7 @@
   --ring-stroke: 10px;
 
   /* --- App shell / layout --------------------------------------------- */
-  --app-max-w:    440px;  /* mobile-first PWA column */
+  --app-max-w:    520px;  /* mobile-first PWA column */
   --tabbar-h:     72px;
   --content-pad:  var(--space-5);
   --z-tabbar:     100;  /* @kind other */
