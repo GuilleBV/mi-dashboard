@@ -236,3 +236,125 @@ function renderWorkoutHistory() {
     }, 1500);
   });
 })();
+
+
+/* ── WHOOP MOCK DATA ─────────────────────────────────────────── */
+const whoopMockData = {
+  sueno_pct:    82,
+  sueno_horas:  '6.5h',
+  profundo:     '1.5h',
+  rem:          '2.0h',
+  rec_pct:      91,
+  hrv:          75,
+  rhr:          50,
+  resp:         14.2,
+  spo2:         98,
+  esfuerzo_val: 14.5,
+  calorias:     2450,
+  pasos:        12400,
+  actividad:    'Gym',
+};
+
+let aguaActual = 0;
+const aguaObjetivo = 3200; // ml
+
+/* ── SALUD: RENDER WHOOP ─────────────────────────────────────── */
+function renderWhoopData() {
+  const CIRC = 2 * Math.PI * 36; // 226.19 — radio del anillo SVG
+
+  function setRing(id, pct, color, glow) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.stroke = color;
+    el.style.filter = `drop-shadow(0 0 6px ${glow})`;
+    // Double rAF: asegura que la transición se dispara tras el primer paint
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.style.strokeDashoffset = (CIRC * (1 - pct / 100)).toFixed(2);
+    }));
+  }
+
+  function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  const d = whoopMockData;
+
+  // Sueño (azul claro)
+  setRing('js-ring-sueno', d.sueno_pct, '#38bdf8', 'rgba(56,189,248,.40)');
+  setText('js-sueno-pct',      `${d.sueno_pct}%`);
+  setText('js-sueno-horas',    d.sueno_horas);
+  setText('js-sueno-profundo', d.profundo);
+  setText('js-sueno-rem',      d.rem);
+
+  // Recuperación (verde vibrante)
+  setRing('js-ring-rec', d.rec_pct, '#4ade80', 'rgba(74,222,128,.40)');
+  setText('js-rec-pct',  `${d.rec_pct}%`);
+  setText('js-rec-hrv',  `${d.hrv} ms`);
+  setText('js-rec-rhr',  `${d.rhr} lpm`);
+  setText('js-rec-resp', `${d.resp} rpm`);
+  setText('js-rec-spo2', `${d.spo2}%`);
+
+  // Esfuerzo — strain Whoop va de 0 a 21; anillo muestra % interno (azul oscuro)
+  const esfPct = Math.round((d.esfuerzo_val / 21) * 100);
+  setRing('js-ring-esf', esfPct, '#2563eb', 'rgba(37,99,235,.55)');
+  setText('js-esf-val',       d.esfuerzo_val.toFixed(1));
+  setText('js-esf-calorias',  d.calorias.toLocaleString('es-ES'));
+  setText('js-esf-pasos',     d.pasos.toLocaleString('es-ES'));
+  setText('js-esf-actividad', d.actividad);
+}
+
+/* ── SALUD: WATER ────────────────────────────────────────────── */
+function initWater() {
+  const amountEl  = document.getElementById('js-water-amount');
+  const fillEl    = document.getElementById('js-water-fill');
+  const goalEl    = document.getElementById('js-water-goal');
+  const waterCard = document.getElementById('js-water-card');
+  const progress  = document.getElementById('js-water-progress');
+  const plusBtn   = document.getElementById('js-water-plus');
+  const minusBtn  = document.getElementById('js-water-minus');
+
+  if (!plusBtn || !minusBtn) return;
+
+  if (goalEl) goalEl.textContent = `${(aguaObjetivo / 1000).toFixed(1)}L`;
+
+  function updateWater() {
+    const pct = Math.min((aguaActual / aguaObjetivo) * 100, 100);
+    if (amountEl)  amountEl.textContent  = (aguaActual / 1000).toFixed(1);
+    if (fillEl)    fillEl.style.width    = `${pct}%`;
+    if (progress)  progress.setAttribute('aria-valuenow', Math.round(pct));
+    if (waterCard) waterCard.classList.toggle('water-goal-reached', aguaActual >= aguaObjetivo);
+  }
+
+  plusBtn.addEventListener('click', () => {
+    aguaActual = Math.min(aguaActual + 250, aguaObjetivo);
+    updateWater();
+  });
+
+  minusBtn.addEventListener('click', () => {
+    aguaActual = Math.max(aguaActual - 250, 0);
+    updateWater();
+  });
+
+  updateWater();
+}
+
+/* ── SALUD: INIT ─────────────────────────────────────────────── */
+(function initSalud() {
+  renderWhoopData();
+  initWater();
+
+  const syncBtn = document.getElementById('js-whoop-sync');
+  if (!syncBtn) return;
+
+  let syncing = false;
+  syncBtn.addEventListener('click', () => {
+    if (syncing) return;
+    syncing = true;
+    syncBtn.innerHTML = '<span class="sync-dot"></span> Sincronizando…';
+    setTimeout(() => {
+      syncBtn.innerHTML = '<span class="sync-dot"></span> Whoop';
+      syncing = false;
+    }, 1500);
+  });
+})();
