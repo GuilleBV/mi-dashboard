@@ -1,0 +1,21 @@
+<!-- @dsCard group="Type" viewport="700x150" name="Numeric & data" subtitle="Tabular figures for money, metrics and counters" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 22px; background: var(--bg-base); display:flex; gap:28px; align-items:center; flex-wrap:wrap; }
+  .num { font-variant-numeric: tabular-nums; letter-spacing:-0.02em; color:var(--text-primary); }
+  .cap { font-size:10px; font-family:var(--font-mono); color:var(--text-faint); margin-top:6px; }
+  .col { display:flex; flex-direction:column; }
+</style>
+</head>
+<body>
+  <div class="col"><span class="num" style="font-size:40px; font-weight:800">€48.250</span><span class="cap">net worth · tabular</span></div>
+  <div class="col"><span class="num" style="font-size:28px; font-weight:700">86<span style="font-size:16px; color:var(--text-muted)">%</span></span><span class="cap">ring center</span></div>
+  <div class="col"><span class="num" style="font-size:24px; font-weight:600; color:var(--success)">+2,4%</span><span class="cap">delta up</span></div>
+  <div class="col"><span class="num" style="font-size:24px; font-weight:600; color:var(--danger)">−€128,90</span><span class="cap">expense</span></div>
+  <div class="col"><span class="num" style="font-size:40px; font-weight:800; line-height:0.8; background:var(--gradient-text-blue); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">14</span><span class="cap">racha (días)</span></div>
+</body>
+</html>

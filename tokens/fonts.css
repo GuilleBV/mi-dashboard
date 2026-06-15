@@ -1,0 +1,10 @@
+/* ===========================================================================
+   mi-dashboard · WEBFONTS
+   Primary type is the native system stack (--font-sans) for an authentic
+   Apple/Linear feel. Inter is loaded as a cross-platform fallback so the
+   brand looks identical on Windows/Linux/Android where SF Pro is absent.
+   NOTE: substitution — no licensed binary is bundled; Inter is pulled from
+   Google Fonts. Swap this for a self-hosted @font-face if you need offline.
+   =========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");

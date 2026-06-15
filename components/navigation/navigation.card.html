@@ -1,0 +1,37 @@
+<!-- @dsCard group="Components" viewport="700x140" name="TabBar" subtitle="Fixed glass bottom navigation with active glow" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { margin:0; padding:22px; background:var(--bg-base); }
+  svg { width:22px; height:22px; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="../../_ds_bundle.js"></script>
+  <script type="text/babel">
+    const { TabBar } = window.MiDashboardDesignSystem_1a61a0;
+    const I = (d) => () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{d}</svg>;
+    const Grid = I(<><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></>);
+    const Dumb = I(<><path d="M6.5 6.5 17.5 17.5M21 21l-1-1M3 3l1 1"/><path d="m6.5 6.5-2 2 2 2M17.5 17.5l2-2-2-2"/></>);
+    const Heart = I(<path d="M19 14c1.5-1.5 3-3.2 3-5.5A4.5 4.5 0 0 0 12 6 4.5 4.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/>);
+    const Check = I(<><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></>);
+    const Wallet = I(<><path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2H6"/><circle cx="16" cy="14" r="1"/></>);
+    const items = [
+      {id:"overview",label:"Overview",icon:<Grid/>},
+      {id:"gym",label:"Gym",icon:<Dumb/>},
+      {id:"salud",label:"Salud",icon:<Heart/>},
+      {id:"org",label:"Organizador",icon:<Check/>},
+      {id:"fin",label:"Finanzas",icon:<Wallet/>},
+    ];
+    function Demo(){ const [t,setT]=React.useState("salud"); return <TabBar items={items} active={t} onChange={setT}/>; }
+    ReactDOM.createRoot(document.getElementById("root")).render(<Demo/>);
+  </script>
+</body>
+</html>

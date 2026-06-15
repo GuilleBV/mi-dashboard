@@ -1,0 +1,58 @@
+<!-- @dsCard group="Components" viewport="700x260" name="Buttons & Switch" subtitle="Button variants/sizes, IconButton, Switch states" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { margin:0; padding:22px; background:var(--bg-base); }
+  .grid { display:flex; flex-direction:column; gap:18px; }
+  .row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .lbl { width:84px; flex-shrink:0; font-size:11px; font-family:var(--font-mono); color:var(--text-faint); }
+  svg { width:18px; height:18px; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="../../_ds_bundle.js"></script>
+  <script type="text/babel">
+    const { Button, IconButton, Switch } = window.MiDashboardDesignSystem_1a61a0;
+    const Plus = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>;
+    const Eye = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>;
+    function Demo() {
+      const [on, setOn] = React.useState(true);
+      return (
+        <div className="grid">
+          <div className="row"><span className="lbl">variants</span>
+            <Button variant="primary">Primary</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="danger">Danger</Button>
+          </div>
+          <div className="row"><span className="lbl">sizes</span>
+            <Button size="sm">Small</Button>
+            <Button size="md" iconLeft={<Plus/>}>Añadir</Button>
+            <Button size="lg">Large</Button>
+            <Button disabled>Disabled</Button>
+          </div>
+          <div className="row"><span className="lbl">icon</span>
+            <IconButton ariaLabel="a"><Eye/></IconButton>
+            <IconButton variant="accent" ariaLabel="b"><Plus/></IconButton>
+            <IconButton active ariaLabel="c"><Eye/></IconButton>
+            <IconButton variant="solid" round ariaLabel="d"><Plus/></IconButton>
+          </div>
+          <div className="row"><span className="lbl">switch</span>
+            <Switch checked={on} onChange={setOn} />
+            <Switch checked={!on} onChange={()=>setOn(!on)} />
+            <Switch checked size="sm" />
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<Demo/>);
+  </script>
+</body>
+</html>

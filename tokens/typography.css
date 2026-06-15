@@ -1,0 +1,58 @@
+/* ===========================================================================
+   mi-dashboard · TYPOGRAPHY TOKENS
+   System-first stack (Apple/Linear feel). Inter loaded as cross-platform
+   fallback in HTML; system-ui resolves to SF Pro / Segoe / Roboto natively.
+   =========================================================================== */
+
+:root {
+  /* --- Families ------------------------------------------------------- */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Inter",
+               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* Numeric data (net worth, metrics) — sans with tabular figures */
+  --font-numeric: var(--font-sans);
+
+  /* --- Weights -------------------------------------------------------- */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-heavy:    800;   /* ring centers, big stats */
+
+  /* --- Type scale (rem) ----------------------------------------------- */
+  --text-micro:  0.6875rem;  /* 11px — uppercase eyebrow */
+  --text-xs:     0.75rem;    /* 12px — micro-copy */
+  --text-sm:     0.8125rem;  /* 13px — secondary / list meta */
+  --text-base:   0.9375rem;  /* 15px — body */
+  --text-md:     1.0625rem;  /* 17px — emphasised body */
+  --text-lg:     1.25rem;    /* 20px — card titles */
+  --text-xl:     1.625rem;   /* 26px — section titles */
+  --text-2xl:    2rem;       /* 32px — ring centers */
+  --text-3xl:    2.75rem;    /* 44px — hero figures */
+  --text-display: clamp(4rem, 15cqw, 8rem); /* RACHA scorecard */
+
+  /* --- Line heights --------------------------------------------------- */
+  --leading-tight:  1.1;
+  --leading-snug:   1.25;
+  --leading-normal: 1.5;
+  --leading-display: 0.8;
+
+  /* --- Letter spacing ------------------------------------------------- */
+  --tracking-tight:  -0.02em;
+  --tracking-snug:   -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.05em;   /* uppercase micro-copy */
+  --tracking-wider:  0.08em;
+
+  /* --- Semantic roles ------------------------------------------------- */
+  --font-eyebrow-size: var(--text-micro);
+  --font-eyebrow-weight: var(--weight-semibold);
+  --font-eyebrow-tracking: var(--tracking-wide);
+
+  --font-title-size: var(--text-lg);
+  --font-title-weight: var(--weight-semibold);
+  --font-title-tracking: var(--tracking-snug);
+
+  --font-body-size: var(--text-base);
+  --font-body-weight: var(--weight-regular);
+}

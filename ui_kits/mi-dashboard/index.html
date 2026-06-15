@@ -1,0 +1,109 @@
+<!-- @dsCard group="mi-dashboard" viewport="440x780" name="mi-dashboard app" subtitle="Interactive PWA — Overview, Gym, Salud, Organizador, Finanzas" -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>mi-dashboard</title>
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: #050507;
+    display: flex;
+    justify-content: center;
+  }
+  /* Phone column */
+  .app {
+    position: relative;
+    width: 100%;
+    max-width: var(--app-max-w);
+    min-height: 100vh;
+    background:
+      radial-gradient(480px 280px at 12% -4%, rgba(59,130,246,0.16), transparent 70%),
+      radial-gradient(420px 300px at 100% 8%, rgba(0,240,255,0.10), transparent 70%),
+      var(--bg-base);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--content-pad);
+    padding-bottom: calc(var(--tabbar-h) + var(--space-10));
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabbar-wrap {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: var(--space-4);
+    width: min(calc(var(--app-max-w) - var(--space-8)), calc(100% - var(--space-8)));
+    z-index: var(--z-tabbar);
+  }
+  /* Section transition */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .screen { animation: fadeInUp var(--dur-slow) var(--ease-standard); }
+  @media (prefers-reduced-motion: reduce) { .screen { animation: none; } }
+
+  /* Accordion chevron */
+  details[open] .acc-chevron { transform: rotate(180deg); }
+  summary::-webkit-details-marker { display: none; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="../../_ds_bundle.js"></script>
+
+  <script type="text/babel" src="Shared.jsx"></script>
+  <script type="text/babel" src="Icons.jsx"></script>
+  <script type="text/babel" src="AppData.jsx"></script>
+  <script type="text/babel" src="Overview.jsx"></script>
+  <script type="text/babel" src="Gym.jsx"></script>
+  <script type="text/babel" src="Salud.jsx"></script>
+  <script type="text/babel" src="Organizador.jsx"></script>
+  <script type="text/babel" src="Finanzas.jsx"></script>
+
+  <script type="text/babel">
+    const { TabBar } = window.MiDashboardDesignSystem_1a61a0;
+    const Icon = window.Icon;
+
+    const TABS = [
+      { id: "overview", label: "Overview", icon: <Icon name="grid" size={21} />, Screen: () => <window.Overview /> },
+      { id: "gym", label: "Gym", icon: <Icon name="dumbbell" size={21} />, Screen: () => <window.Gym /> },
+      { id: "salud", label: "Salud", icon: <Icon name="heart" size={21} />, Screen: () => <window.Salud /> },
+      { id: "org", label: "Organizador", icon: <Icon name="checklist" size={21} />, Screen: () => <window.Organizador /> },
+      { id: "fin", label: "Finanzas", icon: <Icon name="wallet" size={21} />, Screen: () => <window.Finanzas /> },
+    ];
+
+    function App() {
+      const [tab, setTab] = React.useState("overview");
+      const scrollRef = React.useRef(null);
+      const current = TABS.find(t => t.id === tab);
+      React.useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = 0; }, [tab]);
+      return (
+        <div className="app">
+          <div className="scroll" ref={scrollRef}>
+            <div className="screen" key={tab}><current.Screen /></div>
+          </div>
+          <div className="tabbar-wrap">
+            <TabBar items={TABS.map(({id,label,icon}) => ({id,label,icon}))} active={tab} onChange={setTab} />
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

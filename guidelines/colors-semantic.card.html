@@ -1,0 +1,31 @@
+<!-- @dsCard group="Colors" viewport="700x200" name="Semantic surfaces & text" subtitle="How neutrals map to backgrounds and type" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 20px; background: var(--bg-base); display: flex; gap: 16px; }
+  .stack { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .surf { padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+  .tline { display: flex; align-items: baseline; gap: 10px; }
+  .tline span:first-child { width: 130px; font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="surf" style="background:var(--bg-base)">--bg-base</div>
+    <div class="surf" style="background:var(--bg-surface)">--bg-surface</div>
+    <div class="surf" style="background:var(--bg-elevated)">--bg-elevated</div>
+    <div class="surf" style="background:var(--bg-glass); backdrop-filter:var(--blur-glass)">--bg-glass · blur</div>
+    <div class="surf" style="background:var(--bg-inset)">--bg-inset (well)</div>
+  </div>
+  <div class="stack" style="justify-content:center">
+    <div class="tline"><span>--text-primary</span><span style="color:var(--text-primary); font-size:17px; font-weight:600">Patrimonio</span></div>
+    <div class="tline"><span>--text-secondary</span><span style="color:var(--text-secondary); font-size:15px">Resumen diario</span></div>
+    <div class="tline"><span>--text-muted</span><span style="color:var(--text-muted); font-size:15px">Etiqueta</span></div>
+    <div class="tline"><span>--text-faint</span><span style="color:var(--text-faint); font-size:13px">metadato</span></div>
+    <div class="tline"><span>--accent</span><span style="color:var(--accent); font-size:15px; font-weight:600">Acción</span></div>
+  </div>
+</body>
+</html>

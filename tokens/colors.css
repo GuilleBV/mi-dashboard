@@ -1,0 +1,84 @@
+/* ===========================================================================
+   mi-dashboard · COLOR TOKENS
+   Dark-mode-pure "Canvas Neutral". Zinc neutrals + electric accents.
+   Base values first, semantic aliases below.
+   =========================================================================== */
+
+:root {
+  /* --- Neutral canvas (Zinc ramp) ------------------------------------- */
+  --zinc-950: #09090b;   /* global background */
+  --zinc-900: #18181b;   /* surface / bento card base */
+  --zinc-850: #1f1f23;   /* surface raised */
+  --zinc-800: #27272a;   /* surface elevated / card top of gradient */
+  --zinc-700: #3f3f46;   /* hairline strong / inactive track */
+  --zinc-600: #52525b;   /* disabled fg */
+  --zinc-500: #71717a;   /* muted-er */
+  --zinc-400: #a1a1aa;   /* secondary text / labels */
+  --zinc-300: #d4d4d8;   /* high muted */
+  --zinc-100: #f4f4f5;   /* near white */
+  --white:    #ffffff;   /* primary text */
+  --black:    #000000;
+
+  /* --- Brand / accent ramps ------------------------------------------- */
+  --blue-electric: #00f0ff;  /* signature glow cyan */
+  --blue-500:      #3b82f6;  /* primary action blue */
+  --blue-600:      #2563eb;  /* primary pressed */
+  --blue-400:      #60a5fa;  /* light blue (sleep ring) */
+  --cobalt-600:    #1d4ed8;  /* deep blue (effort ring) */
+
+  --green-500: #10b981;  /* success / recovery */
+  --green-400: #34d399;
+  --green-600: #059669;
+
+  --amber-500: #f59e0b;  /* warning / medium priority */
+  --red-500:   #ef4444;  /* danger / expenses */
+  --red-600:   #dc2626;
+
+  /* --- Translucent fills (glass / state tints) ------------------------- */
+  --fill-white-04: rgba(255, 255, 255, 0.04);
+  --fill-white-06: rgba(255, 255, 255, 0.06);
+  --fill-white-08: rgba(255, 255, 255, 0.08);
+  --fill-white-12: rgba(255, 255, 255, 0.12);
+  --fill-blue-10:  rgba(0, 240, 255, 0.10);
+  --fill-blue-15:  rgba(59, 130, 246, 0.15);
+  --fill-green-12: rgba(16, 185, 129, 0.12);
+  --fill-amber-12: rgba(245, 158, 11, 0.12);
+  --fill-danger-12: rgba(239, 68, 68, 0.12);
+
+  /* --- Semantic surfaces ---------------------------------------------- */
+  --bg-base:        var(--zinc-950);
+  --bg-surface:     var(--zinc-900);
+  --bg-surface-raised: var(--zinc-850);
+  --bg-elevated:    var(--zinc-800);
+  --bg-glass:       rgba(24, 24, 27, 0.72);   /* + backdrop-blur */
+  --bg-inset:       rgba(0, 0, 0, 0.30);      /* recessed wells / tracks */
+
+  /* --- Semantic text -------------------------------------------------- */
+  --text-primary:   var(--white);
+  --text-secondary: var(--zinc-300);
+  --text-muted:     var(--zinc-400);
+  --text-faint:     var(--zinc-500);
+  --text-disabled:  var(--zinc-600);
+  --text-on-accent: var(--white);
+
+  /* --- Semantic accents ----------------------------------------------- */
+  --accent:         var(--blue-500);
+  --accent-hover:   var(--blue-400);
+  --accent-press:   var(--blue-600);
+  --accent-glow:    var(--blue-electric);
+  --success:        var(--green-500);
+  --warning:        var(--amber-500);
+  --danger:         var(--red-500);
+
+  /* --- Borders / hairlines -------------------------------------------- */
+  --border-subtle:  rgba(255, 255, 255, 0.08);
+  --border-faint:   rgba(255, 255, 255, 0.05);
+  --border-strong:  rgba(255, 255, 255, 0.14);
+  --border-accent:  rgba(59, 130, 246, 0.55);
+  --border-glow:    rgba(0, 240, 255, 0.45);
+
+  /* --- Priority dots --------------------------------------------------- */
+  --priority-high:   var(--red-500);
+  --priority-medium: var(--amber-500);
+  --priority-low:    var(--green-500);
+}

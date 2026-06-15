@@ -1,0 +1,26 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Accents" subtitle="Electric blue, success green, danger — the only chromatic ink" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 20px; background: var(--bg-base); }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sw { flex: 1; min-width: 96px; }
+  .chip { height: 64px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); }
+  .name { margin-top: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+  .hex { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:var(--blue-electric); box-shadow:var(--glow-active)"></div><div class="name">blue-electric</div><div class="hex">#00f0ff · glow</div></div>
+    <div class="sw"><div class="chip" style="background:var(--blue-500)"></div><div class="name">blue-500</div><div class="hex">#3b82f6 · accent</div></div>
+    <div class="sw"><div class="chip" style="background:var(--cobalt-600)"></div><div class="name">cobalt-600</div><div class="hex">#1d4ed8</div></div>
+    <div class="sw"><div class="chip" style="background:var(--green-500)"></div><div class="name">green-500</div><div class="hex">#10b981 · ok</div></div>
+    <div class="sw"><div class="chip" style="background:var(--amber-500)"></div><div class="name">amber-500</div><div class="hex">#f59e0b · warn</div></div>
+    <div class="sw"><div class="chip" style="background:var(--red-500)"></div><div class="name">red-500</div><div class="hex">#ef4444 · danger</div></div>
+  </div>
+</body>
+</html>

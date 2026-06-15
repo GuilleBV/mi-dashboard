@@ -1,0 +1,22 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="Corner radii" subtitle="From controls (14px) to bento cards (20px) to pills" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 22px; background: var(--bg-base); display:flex; gap:16px; align-items:flex-end; flex-wrap:wrap; }
+  .col { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .box { width:76px; height:76px; background:var(--gradient-card); border:1px solid var(--border-subtle); }
+  .lbl { font-family:var(--font-mono); font-size:10px; color:var(--text-faint); text-align:center; }
+</style>
+</head>
+<body>
+  <div class="col"><div class="box" style="border-radius:var(--radius-xs)"></div><span class="lbl">xs · 6</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-sm)"></div><span class="lbl">sm · 10</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-md)"></div><span class="lbl">md · 14<br>control</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-lg)"></div><span class="lbl">lg · 20<br>bento</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-xl)"></div><span class="lbl">xl · 28<br>sheet</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-pill); width:120px"></div><span class="lbl">pill · 999</span></div>
+</body>
+</html>

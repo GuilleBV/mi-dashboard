@@ -1,0 +1,23 @@
+<!-- @dsCard group="Effects" viewport="700x190" name="Shadows & glows" subtitle="Depth from hairlines + accent glows, not heavy drop shadows" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 28px 22px; background: var(--bg-base); display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
+  .col { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .box { width:96px; height:60px; border-radius:var(--radius-md); background:var(--bg-elevated); border:1px solid var(--border-subtle); }
+  .lbl { font-family:var(--font-mono); font-size:10px; color:var(--text-faint); }
+</style>
+</head>
+<body>
+  <div class="col"><div class="box" style="box-shadow:var(--shadow-md)"></div><span class="lbl">shadow-md</span></div>
+  <div class="col"><div class="box" style="box-shadow:var(--shadow-lg)"></div><span class="lbl">shadow-lg</span></div>
+  <div class="col"><div class="box" style="box-shadow:var(--inner-top-hairline)"></div><span class="lbl">inner hairline</span></div>
+  <div class="col"><div class="box" style="box-shadow:var(--glow-active)"></div><span class="lbl">glow-active</span></div>
+  <div class="col"><div class="box" style="box-shadow:var(--glow-blue)"></div><span class="lbl">glow-blue</span></div>
+  <div class="col"><div class="box" style="box-shadow:var(--glow-green)"></div><span class="lbl">glow-green</span></div>
+  <div class="col"><div class="box" style="box-shadow:var(--glow-danger)"></div><span class="lbl">glow-danger</span></div>
+</body>
+</html>

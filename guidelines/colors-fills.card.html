@@ -1,0 +1,30 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Translucent fills & priority" subtitle="State tints over the canvas + priority dots" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; padding: 20px; background: var(--bg-base); display:flex; flex-direction:column; gap:16px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tint { flex:1; min-width:90px; height:48px; border-radius: var(--radius-md); border:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:center; font-family: var(--font-mono); font-size:10px; color: var(--text-secondary); }
+  .dots { display:flex; gap:18px; align-items:center; }
+  .dot { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-muted); }
+  .d { width:12px; height:12px; border-radius:50%; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="tint" style="background:var(--fill-white-08)">white-08</div>
+    <div class="tint" style="background:var(--fill-blue-15)">blue-15</div>
+    <div class="tint" style="background:var(--fill-green-12)">green-12</div>
+    <div class="tint" style="background:var(--fill-amber-12)">amber-12</div>
+    <div class="tint" style="background:var(--fill-danger-12)">danger-12</div>
+  </div>
+  <div class="dots">
+    <div class="dot"><span class="d" style="background:var(--priority-high)"></span>Alta</div>
+    <div class="dot"><span class="d" style="background:var(--priority-medium)"></span>Media</div>
+    <div class="dot"><span class="d" style="background:var(--priority-low)"></span>Baja</div>
+  </div>
+</body>
+</html>
