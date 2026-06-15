@@ -23,14 +23,47 @@
 })();
 
 
-/* ── GREETING ───────────────────────────────────────────────── */
+/* ── GREETING & DATE ────────────────────────────────────────── */
 (function initGreeting() {
-  const el = document.getElementById('js-greeting');
-  if (!el) return;
-  const h = new Date().getHours();
-  el.textContent = h >= 5 && h < 12 ? 'Good Morning'
-                 : h >= 12 && h < 18 ? 'Good Afternoon'
-                 : 'Good Evening';
+  const greetEl = document.getElementById('js-greeting');
+  const dateEl  = document.getElementById('js-header-date');
+  if (!greetEl) return;
+
+  const now  = new Date();
+  const h    = now.getHours();
+  greetEl.textContent = h >= 6 && h < 14 ? 'Buenos días, Guille'
+                      : h >= 14 && h < 21 ? 'Buenas tardes, Guille'
+                      : 'Buenas noches, Guille';
+
+  if (dateEl) {
+    const DAYS   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    dateEl.textContent =
+      `${DAYS[now.getDay()]}, ${now.getDate()} de ${MONTHS[now.getMonth()]}`;
+  }
+})();
+
+
+/* ── OVERVIEW: NET WORTH TOGGLE ─────────────────────────────── */
+(function initOverview() {
+  const REAL_VALUE       = '€ 14.250,00';
+  const HIDDEN_VALUE     = '••••••';
+  let   isVisible        = false;
+
+  const numEl  = document.getElementById('js-ov-net-worth');
+  const eyeBtn = document.getElementById('js-ov-eye-btn');
+  const eyeShow = document.getElementById('js-eye-show');
+  const eyeHide = document.getElementById('js-eye-hide');
+
+  if (!eyeBtn || !numEl) return;
+
+  eyeBtn.addEventListener('click', () => {
+    isVisible = !isVisible;
+    numEl.textContent       = isVisible ? REAL_VALUE : HIDDEN_VALUE;
+    eyeShow.style.display   = isVisible ? 'none'  : '';
+    eyeHide.style.display   = isVisible ? ''      : 'none';
+    eyeBtn.setAttribute('aria-label', isVisible ? 'Ocultar patrimonio' : 'Mostrar patrimonio');
+  });
 })();
 
 
@@ -339,6 +372,151 @@ function initWater() {
   updateWater();
 }
 
+/* ── ORGANIZADOR: DATOS MOCK ─────────────────────────────────── */
+// Días del mes actual en los que se completaron todos los hábitos
+const habitDoneThisMonth = new Set([1,2,3,5,6,7,8,10,11,14]);
+
+/* ── ORGANIZADOR: CALENDARIO MENSUAL ────────────────────────── */
+function renderMonthCalendar() {
+  const container  = document.getElementById('js-month-cal');
+  const progressEl = document.getElementById('js-month-progress');
+  if (!container) return;
+
+  const now    = new Date();
+  const year   = now.getFullYear();
+  const month  = now.getMonth();
+  const today  = now.getDate();
+
+  const MONTH_NAMES = ['Ene','Feb','Mar','Abr','May','Jun',
+                       'Jul','Ago','Sep','Oct','Nov','Dic'];
+  const WEEK_DAYS   = ['L','M','X','J','V','S','D'];
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // Offset lunes-primero: Dom(0)→6, Lun(1)→0, Mar(2)→1 …
+  const startOffset = (new Date(year, month, 1).getDay() + 6) % 7;
+
+  // Progreso: días pasados completados / total días pasados
+  const pastDays = today - 1;
+  const doneDays = pastDays > 0
+    ? [...habitDoneThisMonth].filter(d => d < today).length
+    : 0;
+  const pct = pastDays > 0 ? Math.round((doneDays / pastDays) * 100) : 0;
+
+  if (progressEl) {
+    progressEl.textContent = `${MONTH_NAMES[month]} · ${doneDays}/${pastDays} días · ${pct}%`;
+  }
+
+  let html = '<div class="month-cal-grid">';
+  WEEK_DAYS.forEach(d => { html += `<span class="month-cal-wd">${d}</span>`; });
+
+  for (let i = 0; i < startOffset; i++) {
+    html += '<div class="month-cell month-cell--empty"></div>';
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    let cls = 'month-cell';
+    if (d === today)                    cls += ' month-cell--today';
+    else if (d > today)                 cls += ' month-cell--future';
+    else if (habitDoneThisMonth.has(d)) cls += ' month-cell--done';
+    else                                cls += ' month-cell--failed';
+    html += `<div class="${cls}">${d}</div>`;
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+/* ── ORGANIZADOR: HELPER DE DESAPARICIÓN ─────────────────────── */
+function dismissElement(el, afterDelay) {
+  // Captura la altura actual para que la transición tenga valor de partida
+  el.style.maxHeight = el.scrollHeight + 'px';
+  el.style.overflow  = 'hidden';
+  // Inyecta la transición vía inline para no depender del orden de especificidad
+  el.style.transition =
+    'opacity 0.28s ease, max-height 0.38s ease 0.05s, ' +
+    'margin 0.32s ease, padding 0.32s ease, border-width 0.32s ease';
+
+  setTimeout(() => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.classList.add('slide-out');
+      setTimeout(() => el.remove(), 420);
+    }));
+  }, afterDelay || 0);
+}
+
+/* ── ORGANIZADOR: HÁBITOS CLICK-TO-REVEAL ───────────────────── */
+function initHabits() {
+  const list = document.getElementById('js-habits-list');
+  if (!list) return;
+
+  // Un solo listener delegado para toda la lista
+  list.addEventListener('click', e => {
+    const body = e.target.closest('.habit-body');
+    const done = e.target.closest('.habit-action--done');
+    const skip = e.target.closest('.habit-action--skip');
+    const item = e.target.closest('.habit-item');
+    if (!item) return;
+
+    if (done) {
+      dismissElement(item, 0);
+    } else if (skip) {
+      dismissElement(item, 0);
+    } else if (body) {
+      const isOpen = item.classList.contains('show-actions');
+      // Cierra cualquier otro hábito abierto
+      list.querySelectorAll('.habit-item.show-actions').forEach(el => {
+        el.classList.remove('show-actions');
+      });
+      if (!isOpen) item.classList.add('show-actions');
+    }
+  });
+
+  // Clic fuera de la lista → cierra todos
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#js-habits-list')) {
+      list.querySelectorAll('.habit-item.show-actions').forEach(el => {
+        el.classList.remove('show-actions');
+      });
+    }
+  });
+}
+
+/* ── ORGANIZADOR: TAREAS DINÁMICAS ──────────────────────────── */
+function initTasks() {
+  const list    = document.getElementById('js-tasks-list');
+  const countEl = document.getElementById('js-tasks-count');
+  if (!list) return;
+
+  function updateCount() {
+    const n = list.querySelectorAll('.task-item').length;
+    if (countEl) countEl.textContent = `${n} tarea${n !== 1 ? 's' : ''}`;
+  }
+
+  // Delegación de eventos: un solo listener para toda la lista
+  list.addEventListener('click', e => {
+    const circle   = e.target.closest('.task-circle');
+    const postpone = e.target.closest('.task-postpone');
+    const item     = e.target.closest('.task-item');
+    if (!item) return;
+
+    if (circle) {
+      circle.classList.add('checked');
+      dismissElement(item, 360);
+      setTimeout(updateCount, 800);
+    } else if (postpone) {
+      dismissElement(item, 0);
+      setTimeout(updateCount, 460);
+    }
+  });
+}
+
+/* ── ORGANIZADOR: INIT ───────────────────────────────────────── */
+(function initOrganizador() {
+  renderMonthCalendar();
+  initHabits();
+  initTasks();
+})();
+
+
 /* ── SALUD: INIT ─────────────────────────────────────────────── */
 (function initSalud() {
   renderWhoopData();
@@ -357,4 +535,79 @@ function initWater() {
       syncing = false;
     }, 1500);
   });
+})();
+
+/* ── FINANZAS: MOCK DATA ──────────────────────────────────── */
+const financeData = {
+  patrimonio: 14250.00,
+  patrimonioSign: '+',
+  patrimonioChangePct: 2.4,
+  cuentas: [
+    { label: 'Cuenta corriente', valor: 2500.00 },
+    { label: 'Inversiones',      valor: 11000.00 },
+    { label: 'Crypto',           valor: 750.00 },
+  ],
+  gastosHoy: [
+    { label: 'Café',         valor: -2.50 },
+    { label: 'Gasolina',     valor: -40.00 },
+    { label: 'Supermercado', valor: -28.60 },
+  ],
+  suscripciones: [
+    { nombre: 'Netflix',  precio: 15.99, diasRestantes: 18 },
+    { nombre: 'Spotify',  precio:  9.99, diasRestantes:  2 },
+    { nombre: 'Gimnasio', precio: 45.00, diasRestantes:  7 },
+    { nombre: 'iCloud',   precio:  2.99, diasRestantes: 12 },
+    { nombre: 'ChatGPT',  precio: 20.00, diasRestantes:  3 },
+  ],
+};
+
+/* ── FINANZAS: RENDER ─────────────────────────────────────── */
+function renderFinances() {
+  const fmt = (n) =>
+    `€${Math.abs(n).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const patrimonioEl = document.getElementById('js-fin-patrimonio');
+  const badgeEl      = document.getElementById('js-fin-badge');
+  const cuentasEl    = document.getElementById('js-fin-cuentas');
+  const gastosEl     = document.getElementById('js-fin-gastos');
+  const subsEl       = document.getElementById('js-fin-subs');
+
+  if (patrimonioEl) {
+    patrimonioEl.textContent = fmt(financeData.patrimonio);
+  }
+  if (badgeEl) {
+    badgeEl.textContent =
+      `${financeData.patrimonioSign}${financeData.patrimonioChangePct}% este mes`;
+  }
+  if (cuentasEl) {
+    cuentasEl.innerHTML = financeData.cuentas.map(c => `
+      <div class="fin-list-item">
+        <span class="fin-list-label">${c.label}</span>
+        <span class="fin-list-val">${fmt(c.valor)}</span>
+      </div>`).join('');
+  }
+  if (gastosEl) {
+    gastosEl.innerHTML = financeData.gastosHoy.map(g => `
+      <div class="fin-list-item">
+        <span class="fin-list-label">${g.label}</span>
+        <span class="fin-list-val fin-list-val--negative">−${fmt(g.valor)}</span>
+      </div>`).join('');
+  }
+  if (subsEl) {
+    subsEl.innerHTML = financeData.suscripciones.map(s => {
+      const warn = s.diasRestantes <= 3 ? ' sub-warning' : '';
+      const dias = s.diasRestantes === 1 ? '1 día' : `${s.diasRestantes} días`;
+      return `
+        <div class="sub-block${warn}">
+          <span class="sub-name">${s.nombre}</span>
+          <span class="sub-price">${fmt(s.precio)}</span>
+          <span class="sub-days">en ${dias}</span>
+        </div>`;
+    }).join('');
+  }
+}
+
+/* ── FINANZAS: INIT ───────────────────────────────────────── */
+(function initFinanzas() {
+  renderFinances();
 })();
