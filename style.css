@@ -1233,14 +1233,16 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 10%;
 }
 
 .whoop-ring-value {
-  font-size: clamp(0.9rem, 2.8vw, 1.2rem);
+  font-size: clamp(1.5rem, 5.5vw, 2rem);
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.05em;
   line-height: 1;
   color: var(--fg);
+  text-align: center;
 }
 
 /* ── Lista de submétricas ── */
